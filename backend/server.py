@@ -890,8 +890,8 @@ async def bulk_move_files(request: BulkMoveRequest):
 
 # ===== PHOTO DOCUMENTATION API ROUTES =====
 @api_router.get("/photos/folders")
-async def get_photo_folder_structure():
-    """Get the complete folder structure from Google Drive for photos"""
+async def get_photo_folder_structure(max_depth: int = 3):
+    """Get the folder structure from Google Drive for photos with configurable depth"""
     try:
         service = get_drive_service()
         
@@ -901,8 +901,8 @@ async def get_photo_folder_structure():
             fields='id, name, modifiedTime, owners'
         ).execute())()
         
-        # Fetch all nested folders
-        children = await fetch_folders_recursive(service, PHOTOS_FOLDER_ID, "")
+        # Fetch nested folders with depth limit
+        children = await fetch_folders_recursive(service, PHOTOS_FOLDER_ID, "", max_depth=max_depth)
         
         folder_structure = {
             'id': root_folder['id'],
