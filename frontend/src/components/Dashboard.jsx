@@ -159,6 +159,13 @@ export const Dashboard = ({ onOpenModule }) => {
                         return (
                           <button
                             key={item.id}
+                            onClick={() => {
+                              if (item.id === 'interactive-map') {
+                                onOpenModule('interactive-map');
+                              } else {
+                                toast.info(`${item.label} - Coming soon!`);
+                              }
+                            }}
                             className={`quick-access-btn flex flex-col items-center justify-center p-5 rounded-2xl bg-gradient-to-br ${item.gradient} ${item.hover} text-white shadow-xl relative group icon-bounce`}
                             style={{ animationDelay: `${index * 0.05}s` }}
                           >
