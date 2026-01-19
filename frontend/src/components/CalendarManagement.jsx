@@ -147,34 +147,12 @@ const CalendarManagement = ({ onBack }) => {
       return;
     }
 
-    try {
-      if (isEditMode) {
-        await axios.put(`${BACKEND_URL}/api/event/items/${currentEvent.row_index}`, formData);
-        toast.success('Event updated successfully');
-      } else {
-        await axios.post(`${BACKEND_URL}/api/event/items`, formData);
-        toast.success('Event added successfully');
-      }
-      
-      handleCloseDialog();
-      fetchEvents();
-    } catch (error) {
-      console.error('Error saving event:', error);
-      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} event`);
-    }
+    toast.info('Direct write to Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
+    handleCloseDialog();
   };
 
   const handleDelete = async (event) => {
-    if (window.confirm(`Are you sure you want to delete "${event.eventTask}"?`)) {
-      try {
-        await axios.delete(`${BACKEND_URL}/api/event/items/${event.row_index}`);
-        toast.success('Event deleted successfully');
-        fetchEvents();
-      } catch (error) {
-        console.error('Error deleting event:', error);
-        toast.error('Failed to delete event');
-      }
-    }
+    toast.info('Direct delete from Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
   };
 
   const filteredEvents = events.filter(event => {
