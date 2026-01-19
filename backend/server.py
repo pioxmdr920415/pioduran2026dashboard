@@ -412,14 +412,19 @@ async def delete_event_item(row_index: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ===== GOOGLE DRIVE DOCUMENT MANAGEMENT API ROUTES =====
-async def fetch_folders_recursive(service, parent_id: str, current_path: str = ""):
-    """Recursively fetch all folders from Google Drive"""
+async def fetch_folders_recursive(service, parent_id: str, current_path: str = "", max_depth: int = 5, current_depth: int = 0):
+    """Recursively fetch folders from Google Drive with depth limit"""
     try:
+        # Stop recursion if max depth reached
+        if current_depth >= max_depth:
+            return []
+        
         query = f"'{parent_id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false"
         results = await async_wrap(lambda: service.files().list(
             q=query,
             fields='files(id, name, modifiedTime, owners)',
-            orderBy='name'
+            orderBy='name',
+            pageSize=100  # Limit to 100 folders per level
         ).execute())()
         
         folders = results.get('files', [])
@@ -433,7 +438,7 @@ async def fetch_folders_recursive(service, parent_id: str, current_path: str = "
                 'path': folder_path,
                 'modifiedTime': folder.get('modifiedTime'),
                 'owner': folder.get('owners', [{}])[0].get('displayName', 'Unknown'),
-                'children': await fetch_folders_recursive(service, folder['id'], folder_path)
+                'children': await fetch_folders_recursive(service, folder['id'], folder_path, max_depth, current_depth + 1)
             }
             folder_tree.append(folder_data)
         
