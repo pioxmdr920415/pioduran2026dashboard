@@ -101,24 +101,27 @@ The dashboard includes 6 interactive module cards:
 ## 📁 Project Structure
 
 ```
-/app/frontend/
-├── public/
-│   └── index.html              # HTML template with Google Fonts
-├── src/
-│   ├── components/
-│   │   ├── Dashboard.jsx       # Main dashboard with module data
-│   │   ├── Header.jsx          # Top navigation bar with logo and controls
-│   │   ├── Sidebar.jsx         # Left sidebar navigation
-│   │   ├── ModuleCard.jsx      # Reusable module card component
-│   │   ├── BottomBar.jsx       # Bottom action bar
-│   │   ├── BackgroundBlobs.jsx # Animated gradient backgrounds
-│   │   └── ui/                 # Shadcn UI components
-│   ├── index.css               # Design system tokens and global styles
-│   ├── App.js                  # Root component
-│   └── index.js                # Entry point
-├── package.json                # Dependencies and scripts
-├── tailwind.config.js          # Tailwind configuration
-└── .env                        # Environment variables
+/app/
+├── backend/                    # FastAPI backend
+│   ├── server.py              # Main API server with all endpoints
+│   ├── requirements.txt       # Python dependencies
+│   └── .env                   # Backend environment variables
+├── frontend/                   # React frontend
+│   ├── public/
+│   │   └── index.html         # HTML template
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   ├── index.css          # Design system tokens
+│   │   ├── App.js             # Root component with routing
+│   │   └── index.js           # Entry point
+│   ├── package.json           # Node dependencies
+│   ├── tailwind.config.js     # Tailwind configuration
+│   └── .env                   # Frontend environment variables
+├── tests/                      # Test directory
+├── *.sh                        # Installation & build scripts
+├── test_result.md              # Testing data and logs
+├── README.md                   # This file
+└── README_SCRIPTS.md           # Scripts documentation
 ```
 
 ## 🚀 Getting Started
