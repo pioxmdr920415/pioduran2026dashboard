@@ -120,34 +120,12 @@ const SupplyInventory = ({ onBack }) => {
       return;
     }
 
-    try {
-      if (isEditMode) {
-        await axios.put(`${BACKEND_URL}/api/supply/items/${currentSupply.row_index}`, formData);
-        toast.success('Supply item updated successfully');
-      } else {
-        await axios.post(`${BACKEND_URL}/api/supply/items`, formData);
-        toast.success('Supply item added successfully');
-      }
-      
-      handleCloseDialog();
-      fetchSupplies();
-    } catch (error) {
-      console.error('Error saving supply:', error);
-      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} supply item`);
-    }
+    toast.info('Direct write to Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
+    handleCloseDialog();
   };
 
   const handleDelete = async (supply) => {
-    if (window.confirm(`Are you sure you want to delete ${supply.itemName}?`)) {
-      try {
-        await axios.delete(`${BACKEND_URL}/api/supply/items/${supply.row_index}`);
-        toast.success('Supply item deleted successfully');
-        fetchSupplies();
-      } catch (error) {
-        console.error('Error deleting supply:', error);
-        toast.error('Failed to delete supply item');
-      }
-    }
+    toast.info('Direct delete from Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
   };
 
   const filteredSupplies = supplies.filter(supply =>
