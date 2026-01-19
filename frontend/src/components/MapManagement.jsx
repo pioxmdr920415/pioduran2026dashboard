@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
 import { 
   Map as MapIcon, 
   Search, 
@@ -30,8 +29,6 @@ import {
   listFilesInFolder, 
   isApiKeyConfigured 
 } from '../services/googleDriveService';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 // Loading skeleton
 const MapCardSkeleton = () => (
