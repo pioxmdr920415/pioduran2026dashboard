@@ -108,34 +108,12 @@ const ContactDirectory = ({ onBack }) => {
       return;
     }
 
-    try {
-      if (isEditMode) {
-        await axios.put(`${BACKEND_URL}/api/contact/items/${currentContact.row_index}`, formData);
-        toast.success('Contact updated successfully');
-      } else {
-        await axios.post(`${BACKEND_URL}/api/contact/items`, formData);
-        toast.success('Contact added successfully');
-      }
-      
-      handleCloseDialog();
-      fetchContacts();
-    } catch (error) {
-      console.error('Error saving contact:', error);
-      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} contact`);
-    }
+    toast.info('Direct write to Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
+    handleCloseDialog();
   };
 
   const handleDelete = async (contact) => {
-    if (window.confirm(`Are you sure you want to delete ${contact.name}?`)) {
-      try {
-        await axios.delete(`${BACKEND_URL}/api/contact/items/${contact.row_index}`);
-        toast.success('Contact deleted successfully');
-        fetchContacts();
-      } catch (error) {
-        console.error('Error deleting contact:', error);
-        toast.error('Failed to delete contact');
-      }
-    }
+    toast.info('Direct delete from Google Sheets not available with API key authentication. Please use backend API or service account for write operations.');
   };
 
   const filteredContacts = contacts.filter(contact =>
