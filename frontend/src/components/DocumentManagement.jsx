@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
 import { 
   FileText, 
   Search, 
@@ -25,8 +24,6 @@ import {
 import FolderTreeItem from './DocumentManagement/FolderTreeItem';
 import FileCard from './DocumentManagement/FileCard';
 import { getFolderStructure, listFilesInFolder, isApiKeyConfigured } from '../services/googleDriveService';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 // Default Document Management folder ID - update this with your actual folder ID
 const DOCUMENTS_ROOT_FOLDER_ID = '1SiOmUx8UZN5gdABHxHY2FI4AOz9Jney1';
 
