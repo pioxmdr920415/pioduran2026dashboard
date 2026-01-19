@@ -42,6 +42,8 @@ export const App = () => {
           return <MapManagement onBack={handleBackToDashboard} />;
         case 'interactive-map':
           return <InteractiveMap onBack={handleBackToDashboard} />;
+        case 'panorama':
+          return <PanoramaGallery onBack={handleBackToDashboard} />;
         default:
           return <Dashboard onOpenModule={handleOpenModule} />;
       }
