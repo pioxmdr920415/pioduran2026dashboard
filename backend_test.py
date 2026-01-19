@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, List, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://repo-setup-36.preview.emergentagent.com/api"
+BACKEND_URL = "https://repo-setup-37.preview.emergentagent.com/api"
 
 class MapsAPITester:
     def __init__(self):
