@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Calendar as CalendarIcon, Clock, MapPin, Tag, Sparkles, CalendarDays, Timer } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Calendar as CalendarIcon, Clock, MapPin, Tag, Sparkles, CalendarDays, Timer, Cloud, CloudOff } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -10,9 +10,7 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Header } from './Header';
 import { BackgroundBlobs } from './BackgroundBlobs';
-import axios from 'axios';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+import { getEventItems, isApiKeyConfigured } from '../services/googleSheetsService';
 
 const STATUS_OPTIONS = ['Upcoming', 'In Progress', 'Completed', 'Cancelled'];
 
