@@ -64,17 +64,18 @@ const PhotoDocumentation = ({ onBack }) => {
   const fetchFolderStructure = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/photos/folders`);
-      setFolderStructure(response.data);
+      // Use direct Google Drive API
+      const structure = await getFolderStructure(PHOTOS_ROOT_FOLDER_ID, 3);
+      setFolderStructure(structure);
       // Auto-select root folder
       if (!selectedFolderId) {
-        setSelectedFolderId(response.data.id);
-        setSelectedFolderName(response.data.name);
-        fetchPhotos(response.data.id);
+        setSelectedFolderId(structure.id);
+        setSelectedFolderName(structure.name);
+        fetchPhotos(structure.id);
       }
     } catch (error) {
       console.error('Error fetching folder structure:', error);
-      toast.error('Failed to load folder structure');
+      toast.error(`Failed to load folder structure: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -84,11 +85,12 @@ const PhotoDocumentation = ({ onBack }) => {
   const fetchPhotos = async (folderId) => {
     setPhotosLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/photos/files/${folderId}`);
-      setPhotos(response.data);
+      // Use direct Google Drive API - specifically get images
+      const imagesList = await getImagesFromFolder(folderId);
+      setPhotos(imagesList);
     } catch (error) {
       console.error('Error fetching photos:', error);
-      toast.error('Failed to load photos');
+      toast.error(`Failed to load photos: ${error.message}`);
       setPhotos([]);
     } finally {
       setPhotosLoading(false);
