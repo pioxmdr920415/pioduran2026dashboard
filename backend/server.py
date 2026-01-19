@@ -1257,6 +1257,90 @@ async def upload_map(folder_id: str, file: UploadFile = FastAPIFile(...)):
         logging.error(f"Error uploading map: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===== PANORAMA/650 MODULE ROUTES =====
+PANORAMA_FOLDER_ID = '1tsbcsTEfg5RLHLJLYXR41avy9SrajsqM'
+
+@api_router.get("/panorama/images")
+async def get_panorama_images():
+    """Get all images from the Panorama/650 Google Drive folder"""
+    try:
+        service = get_drive_service()
+        
+        # Build MIME type query for images only
+        mime_query = " or ".join([f"mimeType='{mime}'" for mime in IMAGE_MIME_TYPES])
+        query = f"'{PANORAMA_FOLDER_ID}' in parents and ({mime_query}) and trashed=false"
+        
+        results = await async_wrap(lambda: service.files().list(
+            q=query,
+            fields='files(id, name, mimeType, modifiedTime, size, owners, webViewLink, webContentLink, iconLink, thumbnailLink, imageMediaMetadata)',
+            orderBy='modifiedTime desc',
+            pageSize=1000
+        ).execute())()
+        
+        files = results.get('files', [])
+        
+        # Format file data
+        formatted_files = []
+        for file in files:
+            formatted_files.append({
+                'id': file['id'],
+                'name': file['name'],
+                'mimeType': file['mimeType'],
+                'modifiedTime': file.get('modifiedTime'),
+                'size': file.get('size', 0),
+                'owner': file.get('owners', [{}])[0].get('displayName', 'Unknown'),
+                'webViewLink': file.get('webViewLink'),
+                'webContentLink': file.get('webContentLink'),
+                'iconLink': file.get('iconLink'),
+                'thumbnailLink': file.get('thumbnailLink'),
+                'imageMediaMetadata': file.get('imageMediaMetadata', {})
+            })
+        
+        return formatted_files
+    except Exception as e:
+        logging.error(f"Error fetching panorama images: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/panorama/search")
+async def search_panorama_images(query: str):
+    """Search for images in the Panorama/650 folder"""
+    try:
+        service = get_drive_service()
+        
+        # Build search query for images only in the panorama folder
+        mime_query = " or ".join([f"mimeType='{mime}'" for mime in IMAGE_MIME_TYPES])
+        search_query = f"'{PANORAMA_FOLDER_ID}' in parents and ({mime_query}) and name contains '{query}' and trashed=false"
+        
+        results = await async_wrap(lambda: service.files().list(
+            q=search_query,
+            fields='files(id, name, mimeType, modifiedTime, size, owners, webViewLink, webContentLink, thumbnailLink, imageMediaMetadata)',
+            orderBy='modifiedTime desc',
+            pageSize=100
+        ).execute())()
+        
+        files = results.get('files', [])
+        
+        # Format file data
+        formatted_files = []
+        for file in files:
+            formatted_files.append({
+                'id': file['id'],
+                'name': file['name'],
+                'mimeType': file['mimeType'],
+                'modifiedTime': file.get('modifiedTime'),
+                'size': file.get('size', 0),
+                'owner': file.get('owners', [{}])[0].get('displayName', 'Unknown'),
+                'webViewLink': file.get('webViewLink'),
+                'webContentLink': file.get('webContentLink'),
+                'thumbnailLink': file.get('thumbnailLink'),
+                'imageMediaMetadata': file.get('imageMediaMetadata', {})
+            })
+        
+        return formatted_files
+    except Exception as e:
+        logging.error(f"Error searching panorama images: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===== MONGODB STATUS CHECK ROUTES =====
 @api_router.get("/")
 async def root():
