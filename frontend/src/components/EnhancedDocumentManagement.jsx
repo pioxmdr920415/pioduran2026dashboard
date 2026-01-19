@@ -13,7 +13,9 @@ import {
   Square,
   Trash2,
   FolderInput,
-  Download
+  Download,
+  LayoutGrid,
+  List as ListIcon
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -50,19 +52,16 @@ import CreateFolderDialog from './DocumentManagement/CreateFolderDialog';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-// Loading skeleton
+// Loading skeleton with shimmer
 const FileCardSkeleton = () => (
-  <Card className="bg-white dark:bg-gray-800">
+  <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm overflow-hidden">
     <CardContent className="p-6">
-      <Skeleton className="h-24 mb-4" />
-      <Skeleton className="h-4 mb-2" />
-      <Skeleton className="h-3 mb-4 w-2/3" />
-      <Skeleton className="h-3 mb-2" />
-      <Skeleton className="h-3 mb-4" />
+      <Skeleton className="h-24 mb-4 bg-blue-100/50 dark:bg-blue-900/20" />
+      <Skeleton className="h-4 mb-2 w-3/4" />
+      <Skeleton className="h-3 mb-4 w-1/2" />
       <div className="flex gap-2">
-        <Skeleton className="h-8 flex-1" />
-        <Skeleton className="h-8 flex-1" />
-        <Skeleton className="h-8 w-10" />
+        <Skeleton className="h-8 flex-1 rounded-md" />
+        <Skeleton className="h-8 flex-1 rounded-md" />
       </div>
     </CardContent>
   </Card>
@@ -79,6 +78,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   const [contentSearch, setContentSearch] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [filterOwner, setFilterOwner] = useState('all');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   
   // Bulk operations
   const [bulkMode, setBulkMode] = useState(false);
@@ -419,17 +419,18 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="flex h-screen">
-        {/* Sidebar */}
-        <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
+      <div className="flex h-screen overflow-hidden">
+        {/* Enhanced Sidebar with Glassmorphism */}
+        <div className="w-80 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border-r border-blue-100 dark:border-gray-700 flex flex-col shadow-xl z-20">
           {/* Sidebar Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-b border-blue-100 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50">
             <div className="flex items-center gap-3 mb-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onBack}
+                className="hover:bg-blue-100/50 hover:text-blue-600 transition-all duration-300"
                 data-testid="back-to-dashboard-btn"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -440,14 +441,15 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={loading}
+                className="ml-auto border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 dark:border-gray-600 dark:text-gray-300"
                 data-testid="refresh-folders-btn"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               </Button>
             </div>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                Folders
+              <h2 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                Folder Structure
               </h2>
               <Button
                 variant="ghost"
@@ -458,6 +460,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                     setCreateFolderDialogOpen(true);
                   }
                 }}
+                className="text-blue-600 hover:bg-blue-100/50"
                 title="Create folder in root"
               >
                 <FolderPlus className="w-4 h-4" />
@@ -468,10 +471,10 @@ const EnhancedDocumentManagement = ({ onBack }) => {
           {/* Folder Tree */}
           <ScrollArea className="flex-1 p-4">
             {loading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-full bg-blue-100/50" />
+                <Skeleton className="h-10 w-full bg-blue-100/50" />
+                <Skeleton className="h-10 w-full bg-blue-100/50" />
               </div>
             ) : folderStructure ? (
               <EnhancedFolderTreeItem
@@ -486,7 +489,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                 onDeleteFolder={(folder) => openDeleteConfirm(folder, 'folder')}
               />
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                 No folders available
               </p>
             )}
@@ -494,21 +497,41 @@ const EnhancedDocumentManagement = ({ onBack }) => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-between mb-4">
+        <div className="flex-1 flex flex-col min-w-0 bg-white/30 dark:bg-gray-900/30">
+          {/* Enhanced Header */}
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border-b border-blue-100 dark:border-gray-700 p-6 shadow-sm z-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 drop-shadow-sm">
                   Document Management
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Current Folder: <span className="font-semibold">{selectedFolderName}</span>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  Current Folder: <span className="font-semibold text-blue-700 dark:text-blue-300">{selectedFolderName}</span>
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mr-2">
+                  <Button
+                    variant={viewMode === 'grid' ? 'white' : 'ghost'}
+                    size="sm"
+                    className={`h-8 px-2 ${viewMode === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
+                    onClick={() => setViewMode('grid')}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'white' : 'ghost'}
+                    size="sm"
+                    className={`h-8 px-2 ${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
+                    onClick={() => setViewMode('list')}
+                  >
+                    <ListIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+
                 <Button
-                  variant="outline"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
                   size="sm"
                   onClick={() => setUploadModalOpen(true)}
                   disabled={!selectedFolderId}
@@ -520,24 +543,29 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                   variant="outline"
                   size="sm"
                   onClick={() => setBulkMode(!bulkMode)}
+                  className={`border-blue-200 hover:bg-blue-50 ${bulkMode ? 'bg-blue-100 text-blue-700 border-blue-300' : ''}`}
                 >
                   {bulkMode ? <Square className="w-4 h-4 mr-2" /> : <CheckSquare className="w-4 h-4 mr-2" />}
-                  Bulk Select
+                  {bulkMode ? 'Exit Bulk Mode' : 'Bulk Select'}
                 </Button>
               </div>
             </div>
 
-            {/* Bulk Actions Bar */}
+            {/* Bulk Actions Bar with Animation */}
             {bulkMode && selectedFileIds.size > 0 && (
-              <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {selectedFileIds.size} file(s) selected
+              <div className="mb-4 p-3 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center justify-between animate-in slide-in-from-top-2 duration-300 shadow-md">
+                <span className="text-sm font-medium text-orange-800 dark:text-orange-200 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-200 text-orange-700 text-xs font-bold">
+                    {selectedFileIds.size}
+                  </span>
+                  file(s) selected
                 </span>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleBulkMove}
+                    className="border-orange-300 hover:bg-orange-100 text-orange-700"
                   >
                     <FolderInput className="w-4 h-4 mr-2" />
                     Move
@@ -546,6 +574,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                     variant="destructive"
                     size="sm"
                     onClick={handleBulkDelete}
+                    className="shadow-md hover:shadow-lg transition-shadow"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
@@ -555,16 +584,17 @@ const EnhancedDocumentManagement = ({ onBack }) => {
             )}
 
             {/* Search and Filters */}
-            <div className="space-y-3">
+            <div className="space-y-3 bg-white/40 dark:bg-gray-800/40 p-3 rounded-2xl border border-blue-50 dark:border-gray-700/50 backdrop-blur-sm">
               <div className="flex gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <div className="relative flex-1 group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-500 z-10" />
                   <Input
-                    placeholder="Search files..."
+                    placeholder="Search documents..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    className="pl-10"
+                    className="pl-10 relative bg-white/80 dark:bg-gray-800/80 border-blue-100 focus:border-blue-400 focus:ring-blue-400/20 transition-all h-10 rounded-xl"
                     data-testid="search-files-input"
                   />
                   {searchQuery && (
@@ -573,31 +603,36 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                         setSearchQuery('');
                         fetchFiles(selectedFolderId);
                       }}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 z-10"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   )}
                 </div>
-                <Button onClick={handleSearch} disabled={!searchQuery.trim()}>
+                <Button 
+                  onClick={handleSearch} 
+                  disabled={!searchQuery.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md hover:shadow-blue-500/20 transition-all"
+                >
                   Search
                 </Button>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center space-x-2 bg-white/50 dark:bg-gray-800/50 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-gray-700">
                   <Switch
                     id="content-search"
                     checked={contentSearch}
                     onCheckedChange={setContentSearch}
+                    className="data-[state=checked]:bg-blue-600"
                   />
-                  <Label htmlFor="content-search" className="text-sm">
+                  <Label htmlFor="content-search" className="text-sm cursor-pointer text-gray-600 dark:text-gray-300">
                     Search file content
                   </Label>
                 </div>
                 <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-48" data-testid="filter-type-select">
-                    <Filter className="w-4 h-4 mr-2" />
+                  <SelectTrigger className="w-40 bg-white/80 border-blue-100 rounded-lg" data-testid="filter-type-select">
+                    <Filter className="w-4 h-4 mr-2 text-blue-500" />
                     <SelectValue placeholder="File Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -610,7 +645,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                   </SelectContent>
                 </Select>
                 <Select value={filterOwner} onValueChange={setFilterOwner}>
-                  <SelectTrigger className="w-48" data-testid="filter-owner-select">
+                  <SelectTrigger className="w-40 bg-white/80 border-blue-100 rounded-lg" data-testid="filter-owner-select">
                     <SelectValue placeholder="Owner" />
                   </SelectTrigger>
                   <SelectContent>
@@ -625,6 +660,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                     variant="outline"
                     size="sm"
                     onClick={handleSelectAll}
+                    className="ml-auto"
                   >
                     {selectedFileIds.size === filteredFiles.length ? 'Deselect All' : 'Select All'}
                   </Button>
@@ -632,25 +668,25 @@ const EnhancedDocumentManagement = ({ onBack }) => {
               </div>
             </div>
 
-            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'}
+            <div className="mt-3 text-xs font-medium text-gray-500 dark:text-gray-400 pl-1">
+              Showing {filteredFiles.length} {filteredFiles.length === 1 ? 'document' : 'documents'}
             </div>
           </div>
 
           {/* File Gallery */}
           <ScrollArea className="flex-1 p-6">
             {filesLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
                 {[...Array(8)].map((_, i) => (
                   <FileCardSkeleton key={i} />
                 ))}
               </div>
             ) : filteredFiles.length > 0 ? (
               <div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}
                 data-testid="file-gallery"
               >
-                {filteredFiles.map((file) => (
+                {filteredFiles.map((file, index) => (
                   <EnhancedFileCard
                     key={file.id}
                     file={file}
@@ -666,18 +702,32 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                     isSelected={selectedFileIds.has(file.id)}
                     onSelect={handleSelectFile}
                     bulkMode={bulkMode}
+                    viewMode={viewMode}
+                    index={index}
                   />
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
-                <FileText className="w-16 h-16 mb-4 opacity-50" />
-                <p className="text-lg font-medium">No documents found</p>
-                <p className="text-sm">
+              <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 mt-20">
+                <div className="w-24 h-24 rounded-full bg-blue-50 dark:bg-gray-800 flex items-center justify-center mb-6 shadow-inner">
+                  <FileText className="w-12 h-12 text-blue-200 dark:text-gray-600" />
+                </div>
+                <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">No documents found</p>
+                <p className="text-sm mt-2 max-w-xs text-center">
                   {searchQuery || filterType !== 'all' || filterOwner !== 'all'
-                    ? 'Try adjusting your filters'
-                    : 'This folder is empty'}
+                    ? 'Try adjusting your filters to find what you are looking for.'
+                    : 'This folder is empty. Upload some files to get started!'}
                 </p>
+                {!searchQuery && (
+                   <Button 
+                     variant="outline" 
+                     className="mt-6 border-blue-200 text-blue-600 hover:bg-blue-50"
+                     onClick={() => setUploadModalOpen(true)}
+                   >
+                     <Upload className="w-4 h-4 mr-2" />
+                     Upload Now
+                   </Button>
+                )}
               </div>
             )}
           </ScrollArea>
@@ -724,16 +774,20 @@ const EnhancedDocumentManagement = ({ onBack }) => {
       />
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="border-red-100 dark:border-red-900">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteItemType}</AlertDialogTitle>
+            <AlertDialogTitle className="text-red-600 flex items-center gap-2">
+              <Trash2 className="w-5 h-5" />
+              Delete {deleteItemType}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deleteItem?.name}"? This action cannot be undone.
+              Are you sure you want to delete <span className="font-semibold text-gray-900 dark:text-gray-100">"{deleteItem?.name}"</span>? 
+              <br />This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
