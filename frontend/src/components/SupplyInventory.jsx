@@ -129,9 +129,9 @@ const SupplyInventory = ({ onBack }) => {
   };
 
   const filteredSupplies = supplies.filter(supply =>
-    supply.itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    supply.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    supply.location.toLowerCase().includes(searchQuery.toLowerCase())
+    (supply.itemName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (supply.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (supply.location || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Get status badge color and icon
