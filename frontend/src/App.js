@@ -39,6 +39,8 @@ export const App = () => {
           return <PhotoDocumentation onBack={handleBackToDashboard} />;
         case 'maps':
           return <MapManagement onBack={handleBackToDashboard} />;
+        case 'interactive-map':
+          return <InteractiveMap onBack={handleBackToDashboard} />;
         default:
           return <Dashboard onOpenModule={handleOpenModule} />;
       }
