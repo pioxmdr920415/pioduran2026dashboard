@@ -117,10 +117,10 @@ const ContactDirectory = ({ onBack }) => {
   };
 
   const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contact.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contact.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contact.phone.includes(searchQuery)
+    (contact.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (contact.position || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (contact.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (contact.phone || '').includes(searchQuery)
   );
 
   return (
