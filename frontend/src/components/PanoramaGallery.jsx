@@ -189,13 +189,14 @@ const PanoramaGallery = ({ onBack }) => {
   const fetchImages = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/panorama/images`);
-      setImages(response.data);
-      setFilteredImages(response.data);
-      toast.success(`Loaded ${response.data.length} images`);
+      // Use direct Google Drive API
+      const imageFiles = await getImagesFromFolder(PANORAMA_FOLDER_ID);
+      setImages(imageFiles);
+      setFilteredImages(imageFiles);
+      toast.success(`Loaded ${imageFiles.length} images`);
     } catch (error) {
       console.error('Error fetching panorama images:', error);
-      toast.error('Failed to load panorama images');
+      toast.error(`Failed to load panorama images: ${error.message}`);
       setImages([]);
       setFilteredImages([]);
     } finally {
