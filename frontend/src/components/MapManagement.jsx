@@ -245,9 +245,9 @@ const MapManagement = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-sm border-b border-teal-100 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -255,21 +255,22 @@ const MapManagement = ({ onBack }) => {
                 variant="ghost"
                 size="sm"
                 onClick={onBack}
-                className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="hover:bg-teal-100/50 hover:text-teal-600 transition-all duration-300"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-lg">
+                <div className="p-2 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
                   <MapIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-400 dark:to-cyan-400">
                     Maps Management
                   </h1>
                   {selectedFolderPath && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1">
+                      <FolderOpen className="w-3 h-3" />
                       {selectedFolderPath}
                     </p>
                   )}
@@ -279,7 +280,7 @@ const MapManagement = ({ onBack }) => {
             <Button
               onClick={handleRefresh}
               disabled={!selectedFolderId || mapsLoading}
-              className="bg-teal-600 hover:bg-teal-700 text-white"
+              className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white shadow-lg shadow-teal-500/20"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${mapsLoading ? 'animate-spin' : ''}`} />
               Refresh
@@ -288,27 +289,25 @@ const MapManagement = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Map Categories */}
           <div className="lg:col-span-1">
-            <Card className="bg-white dark:bg-gray-800 shadow-lg sticky top-6">
+            <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl shadow-xl border-teal-100 dark:border-gray-700 sticky top-24">
               <CardContent className="p-4">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 border-b border-teal-100 dark:border-gray-700 pb-4">
                   <MapIcon className="w-5 h-5 text-teal-600" />
                   Map Categories
                 </h2>
-                <ScrollArea className="h-[calc(100vh-240px)]">
+                <ScrollArea className="h-[calc(100vh-280px)] pr-2">
                   {loading ? (
-                    <div className="space-y-2">
-                      <Skeleton className="h-12" />
-                      <Skeleton className="h-12" />
-                      <Skeleton className="h-12" />
-                      <Skeleton className="h-12" />
-                      <Skeleton className="h-12" />
+                    <div className="space-y-3">
+                      <Skeleton className="h-12 w-full bg-teal-50" />
+                      <Skeleton className="h-12 w-full bg-teal-50" />
+                      <Skeleton className="h-12 w-full bg-teal-50" />
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {Object.entries(categories).map(([key, data]) => (
                         <MapCategory
                           key={key}
@@ -328,17 +327,18 @@ const MapManagement = ({ onBack }) => {
           {/* Main Content - Maps Grid */}
           <div className="lg:col-span-3">
             {/* Search Bar */}
-            {selectedFolderId && (
-              <Card className="bg-white dark:bg-gray-800 shadow-md mb-6">
+            <div className="mb-6 relative group z-10">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-teal-100 dark:border-gray-700 relative">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-teal-500" />
                       <Input
                         placeholder="Search maps..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-gray-50 dark:bg-gray-700"
+                        className="pl-10 bg-white/50 dark:bg-gray-900/50 border-teal-100 focus:border-teal-400 focus:ring-teal-400/20"
                       />
                       {searchQuery && (
                         <button
@@ -349,31 +349,27 @@ const MapManagement = ({ onBack }) => {
                         </button>
                       )}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    <div className="px-3 py-1.5 bg-teal-50 dark:bg-teal-900/20 rounded-lg text-sm font-medium text-teal-700 dark:text-teal-300 whitespace-nowrap border border-teal-100 dark:border-teal-800">
                       {filteredMaps.length} map{filteredMaps.length !== 1 ? 's' : ''}
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </div>
 
             {/* Maps Grid */}
             {!selectedFolderId ? (
-              <Card className="bg-white dark:bg-gray-800 shadow-lg">
-                <CardContent className="p-12 text-center">
-                  <div className="max-w-md mx-auto">
-                    <div className="w-20 h-20 bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <MapIcon className="w-10 h-10 text-teal-600" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                      Select a Map Category
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      Choose a category from the sidebar to view and manage maps
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="flex flex-col items-center justify-center py-20 bg-white/40 dark:bg-gray-800/40 rounded-3xl border-2 border-dashed border-teal-100 dark:border-gray-700 backdrop-blur-sm">
+                <div className="w-24 h-24 bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mb-6 shadow-inner animate-pulse">
+                  <MapIcon className="w-10 h-10 text-teal-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Select a Map Category
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 max-w-sm text-center">
+                  Choose a category from the sidebar to browse the available map collection
+                </p>
+              </div>
             ) : mapsLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
@@ -381,66 +377,81 @@ const MapManagement = ({ onBack }) => {
                 ))}
               </div>
             ) : filteredMaps.length === 0 ? (
-              <Card className="bg-white dark:bg-gray-800 shadow-lg">
-                <CardContent className="p-12 text-center">
-                  <div className="max-w-md mx-auto">
-                    <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <MapIcon className="w-10 h-10 text-gray-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                      {searchQuery ? 'No maps found' : 'No maps in this folder'}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      {searchQuery ? 'Try adjusting your search query' : 'This folder is currently empty'}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="flex flex-col items-center justify-center py-20 bg-white/40 dark:bg-gray-800/40 rounded-3xl border border-teal-100 dark:border-gray-700 backdrop-blur-sm">
+                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                  <MapIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {searchQuery ? 'No maps found' : 'No maps in this folder'}
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {searchQuery ? 'Try adjusting your search query' : 'This folder is currently empty'}
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredMaps.map((map) => {
+                {filteredMaps.map((map, index) => {
                   const badge = getMapTypeBadge(map.mimeType);
                   return (
-                    <Card key={map.id} className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow">
+                    <Card 
+                      key={map.id} 
+                      className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-teal-100/50 overflow-hidden"
+                      style={{
+                        animationDelay: `${index * 0.05}s`,
+                        animation: 'fadeInUp 0.5s ease-out forwards'
+                      }}
+                    >
                       <CardContent className="p-4">
                         {/* Thumbnail */}
                         <div 
-                          className="relative h-48 bg-gray-100 dark:bg-gray-700 rounded-lg mb-3 overflow-hidden cursor-pointer group"
+                          className="relative h-48 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4 overflow-hidden cursor-pointer shadow-inner"
                           onClick={() => handleViewMap(map)}
                         >
                           {map.thumbnailLink ? (
                             <img
                               src={map.thumbnailLink}
                               alt={map.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <MapIcon className="w-16 h-16 text-gray-400" />
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700">
+                              <MapIcon className="w-12 h-12 text-teal-200 dark:text-gray-600" />
                             </div>
                           )}
                           <div className="absolute top-2 right-2">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${badge.color}`}>
+                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold tracking-wider shadow-sm ${badge.color}`}>
                               {badge.label}
                             </span>
+                          </div>
+                          
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <Button size="sm" className="bg-white/20 backdrop-blur-md text-white border border-white/40 hover:bg-white/30">
+                              View Map
+                            </Button>
                           </div>
                         </div>
 
                         {/* Map Info */}
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 truncate" title={map.name}>
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-2 truncate group-hover:text-teal-600 transition-colors" title={map.name}>
                           {map.name}
                         </h3>
-                        <div className="space-y-1 text-xs text-gray-500 dark:text-gray-400 mb-3">
-                          <p>Modified: {new Date(map.modifiedTime).toLocaleDateString()}</p>
-                          <p>Owner: {map.owner}</p>
-                          <p>Size: {(parseInt(map.size) / 1024 / 1024).toFixed(2)} MB</p>
+                        <div className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 mb-4 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-100 dark:border-gray-700">
+                          <div className="flex justify-between">
+                            <span>Modified:</span>
+                            <span className="font-medium">{new Date(map.modifiedTime).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Size:</span>
+                            <span className="font-medium">{(parseInt(map.size) / 1024 / 1024).toFixed(2)} MB</span>
+                          </div>
                         </div>
 
                         {/* Actions */}
                         <div className="flex gap-2">
                           <Button
                             onClick={() => handleViewMap(map)}
-                            className="flex-1 bg-teal-600 hover:bg-teal-700 text-white"
+                            className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white shadow-md hover:shadow-lg transition-all"
                             size="sm"
                           >
                             View
@@ -448,10 +459,10 @@ const MapManagement = ({ onBack }) => {
                           <Button
                             onClick={() => window.open(map.webViewLink, '_blank')}
                             variant="outline"
-                            className="flex-1"
+                            className="flex-1 border-teal-200 text-teal-700 hover:bg-teal-50 dark:border-gray-600 dark:text-gray-300"
                             size="sm"
                           >
-                            Open in Drive
+                            Drive
                           </Button>
                         </div>
                       </CardContent>
