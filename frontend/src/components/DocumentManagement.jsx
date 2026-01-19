@@ -63,15 +63,16 @@ const DocumentManagement = ({ onBack }) => {
   const fetchFolderStructure = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/documents/folders`);
-      setFolderStructure(response.data);
+      // Use direct Google Drive API
+      const structure = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3);
+      setFolderStructure(structure);
       // Auto-select root folder
-      setSelectedFolderId(response.data.id);
-      setSelectedFolderName(response.data.name);
-      fetchFiles(response.data.id);
+      setSelectedFolderId(structure.id);
+      setSelectedFolderName(structure.name);
+      fetchFiles(structure.id);
     } catch (error) {
       console.error('Error fetching folder structure:', error);
-      toast.error('Failed to load folder structure');
+      toast.error(`Failed to load folder structure: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -81,11 +82,12 @@ const DocumentManagement = ({ onBack }) => {
   const fetchFiles = async (folderId) => {
     setFilesLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/documents/files/${folderId}`);
-      setFiles(response.data);
+      // Use direct Google Drive API
+      const filesList = await listFilesInFolder(folderId);
+      setFiles(filesList);
     } catch (error) {
       console.error('Error fetching files:', error);
-      toast.error('Failed to load files');
+      toast.error(`Failed to load files: ${error.message}`);
       setFiles([]);
     } finally {
       setFilesLoading(false);
