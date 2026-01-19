@@ -372,6 +372,30 @@ backend:
         agent: "testing"
         comment: "❌ CRITICAL FAILURE: GET /api/maps/search endpoint failing with Google Drive authentication error. Cannot search for map files due to 'invalid_grant: Invalid JWT Signature' error. Same authentication issue affects all Google Drive dependent endpoints."
 
+  - task: "Panorama Module - Images API Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "❌ CRITICAL: GET /api/panorama/images endpoint created to fetch images from Google Drive folder (1tsbcsTEfg5RLHLJLYXR41avy9SrajsqM). Endpoint failing with same Google Drive authentication error: 'invalid_grant: Invalid JWT Signature'. Root cause is corrupted service account JSON key. Requires new service account key generation from Google Cloud Console."
+
+  - task: "Panorama Module - Search API Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "❌ CRITICAL: GET /api/panorama/search endpoint created for searching images in Panorama folder. Same Google Drive authentication issue affects this endpoint. Once service account is fixed, this endpoint will search images by name within folder 1tsbcsTEfg5RLHLJLYXR41avy9SrajsqM."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive testing of MDRRMO Pio Duran File Management Dashboard. Will test all visual components, interactions, animations, and responsive behavior as requested."
