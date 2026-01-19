@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar';
 import { ModuleCard } from './ModuleCard';
 import { BottomBar } from './BottomBar';
 import { BackgroundBlobs } from './BackgroundBlobs';
+import { toast } from 'sonner';
 import { 
   Flame, 
   Users, 
