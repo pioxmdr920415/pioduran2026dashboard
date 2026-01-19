@@ -175,22 +175,10 @@ const MapManagement = ({ onBack }) => {
   const [previewMap, setPreviewMap] = useState(null);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
-  // Fetch map categories
+  // Initialize on mount
   useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${BACKEND_URL}/api/maps/categories`);
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching map categories:', error);
-        toast.error('Failed to load map categories');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
+    // Categories are already defined in state, just set loading to false
+    setLoading(false);
   }, []);
 
   // Fetch maps in a folder
