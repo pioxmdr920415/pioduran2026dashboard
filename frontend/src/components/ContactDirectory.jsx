@@ -166,6 +166,37 @@ const ContactDirectory = ({ onBack }) => {
                 </div>
               </div>
 
+              {/* Google Sheets Connection Banner */}
+              {isApiKeyConfigured() ? (
+                <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <Cloud className="h-5 w-5 text-green-500" />
+                    <div>
+                      <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                        Connected to Google Sheets
+                      </p>
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">
+                        Data is being fetched directly from Google Sheets
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <CloudOff className="h-5 w-5 text-amber-500" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                        Google Sheets API Key Not Configured
+                      </p>
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                        Please add REACT_APP_GOOGLE_SHEETS_API_KEY to your .env file
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Enhanced Actions Bar */}
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <div className="flex-1 relative group">
