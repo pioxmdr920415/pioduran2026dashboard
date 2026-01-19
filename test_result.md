@@ -292,8 +292,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Interactive Map Module - Leaflet/OpenStreetMap Integration"
-    - "Interactive Map Quick Access Button"
+    - "Enhanced Contact Directory Design"
+    - "Enhanced Supply Inventory Design"
+    - "Enhanced Calendar Management Design"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
