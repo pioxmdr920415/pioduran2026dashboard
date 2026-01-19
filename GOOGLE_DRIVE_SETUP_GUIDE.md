@@ -43,7 +43,7 @@ The application now uses **direct frontend connection** to Google Drive API, byp
    - Check only **Google Drive API**
 3. Under **Application restrictions** (optional but recommended):
    - Select **HTTP referrers (web sites)**
-   - Add your domain: `https://repo-setup-38.preview.emergentagent.com/*`
+   - Add your domain: `https://dep-setup-launch.preview.emergentagent.com/*`
    - For local development, add: `http://localhost:3000/*`
 4. Click **Save**
 
