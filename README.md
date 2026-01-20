@@ -95,6 +95,33 @@ yarn clean:backend       # Clean backend cache
 
 **Build Output**: Production build is generated in `/app/frontend/build/`
 
+## 🏗️ Architecture
+
+This application uses a **frontend-only architecture** with direct API integration:
+
+- **No Backend Server Required** - All data operations happen directly from the browser
+- **Google Drive API** - Direct file and folder management via `googleDriveService.js`
+- **Google Sheets API** - Direct spreadsheet data access via `googleSheetsService.js`
+- **Static Deployment Ready** - Can be deployed to Vercel, Netlify, GitHub Pages, etc.
+- **API Key Authentication** - Uses API keys configured in `.env` file
+- **Read-Only Operations** - Safe public deployment without write access concerns
+
+### API Services
+
+Located in `/app/frontend/src/services/`:
+
+1. **googleDriveService.js** - Handles Google Drive operations
+   - List files and folders
+   - Get folder structure
+   - Search files
+   - Fetch images and documents
+
+2. **googleSheetsService.js** - Handles Google Sheets operations
+   - Read spreadsheet data
+   - Parse rows into objects
+   - Filter and search data
+   - Multi-sheet support
+
 ## ✨ Features
 
 ### 🎨 Design & UI
