@@ -71,12 +71,22 @@ yarn build
 
 ## ⚡ Key Links
 
-- **[Package Scripts Guide](PACKAGE_SCRIPTS_GUIDE.md)** - All yarn commands explained
-- **[Quick Start Guide](QUICK_START.md)** - Get started in 2 minutes
-- **[Interactive Map Documentation](MAPS_MODULE_DOCUMENTATION.md)** - Leaflet/OpenStreetMap integration
-- **[Panorama 360° Guide](PANORAMA_360_ENHANCEMENT.md)** - Immersive panoramic viewer
-- **[Design Enhancements](DESIGN_ENHANCEMENTS.md)** - UI/UX improvements
-- **[Frontend API Setup](DIRECT_FRONTEND_API_SETUP.md)** - Google Drive/Sheets integration
+### 📚 Essential Documentation
+- **[Docs Folder](./Docs/)** - All documentation organized by topic
+- **[Quick Start Guide](./Docs/QUICK_START.md)** - Get started in 2 minutes
+- **[Quick Reference](./Docs/QUICK_REFERENCE.md)** - One-page reference card
+- **[Deployment Guide](./Docs/DEPLOYMENT_GUIDE.md)** - Deploy to any platform
+- **[Frontend API Setup](./Docs/DIRECT_FRONTEND_API_SETUP.md)** - Configure Google APIs
+
+### 🎯 Feature Documentation
+- **[Interactive Map](./Docs/MAPS_MODULE_DOCUMENTATION.md)** - Leaflet/OpenStreetMap integration
+- **[Panorama 360° Guide](./Docs/PANORAMA_360_ENHANCEMENT.md)** - Immersive panoramic viewer
+- **[PWA Features](./Docs/PWA_INSTALLATION_GUIDE.md)** - Progressive Web App
+
+### 🔄 Migration & Status
+- **[Frontend-Only Migration](./Docs/FRONTEND_ONLY_MIGRATION.md)** - Backend removal details
+- **[Project Status](./Docs/PROJECT_STATUS.md)** - Current status
+
 
 ## 🛠️ Available Scripts
 
