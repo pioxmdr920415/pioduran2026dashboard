@@ -22,7 +22,6 @@ import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { ScrollArea } from './ui/scroll-area';
-import { toast } from 'sonner';
 import { getFolderStructure, listFilesInFolder, searchFilesInFolder, isApiKeyConfigured } from '../services/googleDriveService';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
