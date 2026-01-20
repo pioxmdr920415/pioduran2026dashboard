@@ -552,6 +552,18 @@ backend:
         agent: "main"
         comment: "Added print functionality to Contact Directory module. Features include: Print Report button with printer icon, ability to print all data or filtered/searched data, professional print layout with company header and timestamp, print-optimized table view showing all contact details, automatic browser print dialog, contact count in print view. Uses @media print CSS for clean print output. Print button displays next to search bar and Add Contact button."
 
+  - task: "DRRM-Web Quick Access Button External Navigation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Dashboard.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated DRRM-Web quick access button to navigate to external URL: https://mdrrmo-pioduran-goa8xfvkt-mdrrmo4518-7282s-projects.vercel.app/. Button now opens link in new tab with security attributes (noopener, noreferrer). Shows success toast notification 'Opening DRRM-Web in new tab...' when clicked. Frontend hot reload will apply changes."
+
   - task: "Progressive Web App (PWA) Installation Feature"
     implemented: true
     working: "NA"
