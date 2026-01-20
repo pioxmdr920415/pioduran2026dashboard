@@ -487,6 +487,14 @@ const PanoramaGallery = ({ onBack }) => {
   const [filteredImages, setFilteredImages] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
 
+  // Handle image click with feedback
+  const handleImageClick = (image) => {
+    setPreviewImage(image);
+    toast.info('Opening 360° Panorama Viewer...', {
+      duration: 1500
+    });
+  };
+
   // Fetch images from Google Drive
   const fetchImages = async () => {
     setLoading(true);
