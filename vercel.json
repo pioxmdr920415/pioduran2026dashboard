@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "name": "mdrrmo-pio-duran",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/logo(.*)",
+      "dest": "/logo$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_GOOGLE_DRIVE_API_KEY": "@google_drive_api_key",
+    "REACT_APP_GOOGLE_SHEETS_API_KEY": "@google_sheets_api_key",
+    "REACT_APP_GOOGLE_SHEET_ID": "@google_sheet_id"
+  },
+  "build": {
+    "env": {
+      "REACT_APP_GOOGLE_DRIVE_API_KEY": "@google_drive_api_key",
+      "REACT_APP_GOOGLE_SHEETS_API_KEY": "@google_sheets_api_key",
+      "REACT_APP_GOOGLE_SHEET_ID": "@google_sheet_id"
+    }
+  }
+}

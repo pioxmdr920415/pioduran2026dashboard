@@ -1,0 +1,65 @@
+# Backend files (not needed for frontend deployment)
+backend/
+*.pyc
+__pycache__/
+*.py
+requirements.txt
+service_account.json
+
+# Test files
+tests/
+test_*.py
+*.test.js
+
+# Scripts
+scripts/
+*.sh
+dev.sh
+install.sh
+setup.sh
+start.sh
+
+# Documentation (optional, can be included)
+*.md
+!README.md
+
+# Environment files
+.env.local
+.env.development
+.env.test
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production build (will be generated)
+build/
+dist/
+
+# Misc
+.DS_Store
+.env
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# MongoDB
+*.mongo
+
+# Python virtual environment
+venv/
+env/
+.venv/
