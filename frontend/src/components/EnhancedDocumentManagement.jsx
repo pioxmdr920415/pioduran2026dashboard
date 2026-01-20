@@ -354,7 +354,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
 
   useEffect(() => {
     fetchFolderStructure();
-  }, []);
+  }, [fetchFolderStructure]);
 
   // Dialog handlers
   const openRenameDialog = (item, type) => {
