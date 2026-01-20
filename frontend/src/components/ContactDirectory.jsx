@@ -217,6 +217,15 @@ const ContactDirectory = ({ onBack }) => {
                   />
                 </div>
                 <Button
+                  onClick={handlePrint}
+                  variant="outline"
+                  className="border-2 border-green-400 text-green-600 hover:bg-green-50 dark:hover:bg-green-950 hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 h-12 px-6 print:hidden"
+                  data-testid="print-contact-btn"
+                >
+                  <Printer className="h-5 w-5 mr-2" />
+                  Print Report
+                </Button>
+                <Button
                   onClick={() => handleOpenDialog()}
                   className="bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 hover:from-green-500 hover:via-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 h-12 px-6"
                   data-testid="add-contact-btn"
