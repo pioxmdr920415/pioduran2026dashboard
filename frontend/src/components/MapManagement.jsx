@@ -260,14 +260,6 @@ const MapManagement = ({ onBack }) => {
     );
   }, [maps, searchQuery]);
 
-  // Get map type badge color
-  const getMapTypeBadge = (mimeType) => {
-    if (mimeType === 'application/pdf') {
-      return { label: 'PDF', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' };
-    }
-    return { label: 'IMAGE', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' };
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
       {/* API Key Warning Banner */}
