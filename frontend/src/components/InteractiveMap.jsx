@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, useMap, Marker, Popup, LayersControl, useMapEvents } from 'react-leaflet';
 import { 
   ArrowLeft, 
-  Maximize2, 
-  Minimize2,
   Navigation,
   Ruler,
   Pencil,
@@ -18,7 +16,10 @@ import {
   Target,
   Info,
   Settings,
-  Menu
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import L from 'leaflet';
@@ -38,112 +39,6 @@ L.Icon.Default.mergeOptions({
 const PIO_DURAN_CENTER = [13.0667, 123.4667];
 const DEFAULT_ZOOM = 13;
 
-// Map Controls Component
-const MapControls = ({ 
-  isFullscreen, 
-  onToggleFullscreen, 
-  onLocate,
-  activeTool,
-  onToolSelect,
-  isDarkMode,
-  onClearAll,
-  onExport,
-  onImport
-}) => {
-  const tools = [
-    { id: 'marker', icon: MapPin, label: 'Marker', gradient: 'from-blue-500 to-cyan-500' },
-    { id: 'polyline', icon: Pencil, label: 'Line', gradient: 'from-emerald-500 to-green-500' },
-    { id: 'polygon', icon: SquareIcon, label: 'Polygon', gradient: 'from-violet-500 to-purple-500' },
-    { id: 'circle', icon: CircleIcon, label: 'Circle', gradient: 'from-pink-500 to-rose-500' },
-    { id: 'ruler', icon: Ruler, label: 'Measure', gradient: 'from-amber-500 to-orange-500' },
-  ];
-
-  return (
-    <>
-      {/* Floating Toolbar - Left Side */}
-      <div className="absolute top-24 left-4 z-[1000] flex flex-col gap-4">
-        {/* Drawing Tools Dock */}
-        <div className="bg-black/80 backdrop-blur-md rounded-2xl p-2 shadow-2xl border border-white/20 flex flex-col gap-2 transition-all duration-300 hover:bg-black/90 hover:border-white/30 hover:scale-105">
-          <div className="text-[10px] uppercase text-gray-400 font-bold text-center py-1 border-b border-white/10 mb-1 tracking-wider">
-            Tools
-          </div>
-          {tools.map((tool) => {
-            const Icon = tool.icon;
-            const isActive = activeTool === tool.id;
-            return (
-              <button
-                key={tool.id}
-                onClick={() => onToolSelect(tool.id)}
-                className={`group relative p-3 rounded-xl transition-all duration-300 flex items-center justify-center ${
-                  isActive
-                    ? `bg-gradient-to-br ${tool.gradient} text-white shadow-lg ring-2 ring-white/20`
-                    : 'text-gray-400 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${isActive ? 'animate-pulse' : ''}`} />
-                
-                {/* Tooltip */}
-                <div className="absolute left-full ml-3 px-2 py-1 bg-black/90 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 shadow-xl pointer-events-none">
-                  {tool.label}
-                  {/* Arrow */}
-                  <div className="absolute top-1/2 right-full -mt-1 -mr-1 border-4 border-transparent border-r-black/90"></div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Action Tools */}
-        <div className="bg-black/80 backdrop-blur-md rounded-2xl p-2 shadow-2xl border border-white/20 flex flex-col gap-2">
-           <button
-            onClick={onClearAll}
-            className="group relative p-3 rounded-xl text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-all duration-300"
-          >
-            <Trash2 className="w-5 h-5" />
-             <div className="absolute left-full ml-3 px-2 py-1 bg-black/90 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 shadow-xl pointer-events-none">
-              Clear All
-            </div>
-          </button>
-          <button
-            onClick={onExport}
-            className="group relative p-3 rounded-xl text-gray-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all duration-300"
-          >
-            <Download className="w-5 h-5" />
-             <div className="absolute left-full ml-3 px-2 py-1 bg-black/90 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 shadow-xl pointer-events-none">
-              Export Data
-            </div>
-          </button>
-        </div>
-      </div>
-
-      {/* Floating Toolbar - Right Side */}
-      <div className="absolute bottom-8 right-4 z-[1000] flex flex-col gap-3">
-        {/* Location Control */}
-        <button
-          onClick={onLocate}
-          className="group bg-black/80 backdrop-blur-md rounded-full p-4 shadow-2xl border border-white/20 text-white hover:bg-cyan-600 transition-all duration-300 hover:scale-110"
-        >
-          <Target className="w-6 h-6" />
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 shadow-xl pointer-events-none">
-            My Location
-          </div>
-        </button>
-
-        {/* Fullscreen Toggle */}
-        <button
-          onClick={onToggleFullscreen}
-          className="group bg-black/80 backdrop-blur-md rounded-full p-4 shadow-2xl border border-white/20 text-white hover:bg-purple-600 transition-all duration-300 hover:scale-110"
-        >
-          {isFullscreen ? <Minimize2 className="w-6 h-6" /> : <Maximize2 className="w-6 h-6" />}
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 shadow-xl pointer-events-none">
-            {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-          </div>
-        </button>
-      </div>
-    </>
-  );
-};
-
 // Coordinate Display Component
 const CoordinateDisplay = () => {
   const [position, setPosition] = useState(null);
@@ -155,7 +50,7 @@ const CoordinateDisplay = () => {
   });
 
   return position ? (
-    <div className="absolute bottom-4 left-4 z-[1000] bg-black/80 backdrop-blur-md rounded-full px-4 py-2 shadow-xl border border-white/20 pointer-events-none">
+    <div className="absolute bottom-4 left-4 z-[1000] bg-black/80 backdrop-blur-md rounded-full px-4 py-2 shadow-xl border border-cyan-500/20 pointer-events-none">
       <div className="flex items-center gap-3 text-xs text-white/90">
         <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></div>
         <span className="font-mono tracking-wider">
@@ -315,28 +210,28 @@ const SearchControl = ({ onSearch }) => {
   };
 
   return (
-    <div className="absolute top-24 right-4 z-[1000] w-72">
-      <form onSubmit={handleSearch} className="bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 transition-all duration-300 focus-within:ring-2 focus-within:ring-cyan-500/50">
-        <div className="flex items-center p-1.5 gap-2">
-          <Search className="w-4 h-4 text-cyan-500 ml-2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search location..."
-            className="flex-1 bg-transparent border-none outline-none text-white text-sm placeholder:text-gray-500"
-            disabled={isSearching}
-          />
+    <form onSubmit={handleSearch} className="mb-6">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cyan-400 w-4 h-4" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search location..."
+          className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent outline-none text-white placeholder:text-gray-500 transition-all"
+          disabled={isSearching}
+        />
+        {searchQuery && (
           <button
-            type="submit"
-            disabled={isSearching}
-            className="p-2 rounded-xl bg-white/10 text-white hover:bg-cyan-600 transition-colors disabled:opacity-50"
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
           >
-            {isSearching ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <ArrowLeft className="w-4 h-4 rotate-180" />}
+            <X className="w-4 h-4" />
           </button>
-        </div>
-      </form>
-    </div>
+        )}
+      </div>
+    </form>
   );
 };
 
@@ -356,10 +251,195 @@ const MapMovementHandler = ({ searchResult }) => {
   return null;
 };
 
+// Sidebar Component
+const Sidebar = ({ 
+  activeTool,
+  onToolSelect,
+  onLocate,
+  onClearAll,
+  onExport,
+  onSearch,
+  isDarkMode,
+  searchResult
+}) => {
+  const tools = [
+    { id: 'marker', icon: MapPin, label: 'Marker', gradient: 'from-blue-500 to-cyan-500' },
+    { id: 'polyline', icon: Pencil, label: 'Line', gradient: 'from-emerald-500 to-green-500' },
+    { id: 'polygon', icon: SquareIcon, label: 'Polygon', gradient: 'from-violet-500 to-purple-500' },
+    { id: 'circle', icon: CircleIcon, label: 'Circle', gradient: 'from-pink-500 to-rose-500' },
+    { id: 'ruler', icon: Ruler, label: 'Measure', gradient: 'from-amber-500 to-orange-500' },
+  ];
+
+  return (
+    <div className="bg-black/90 backdrop-blur-md border-r border-white/10 w-72 h-full flex flex-col p-4 overflow-y-auto">
+      <div className="space-y-6">
+
+        {/* Search Section */}
+        <div className="space-y-2">
+          <SearchControl onSearch={onSearch} />
+        </div>
+
+        {/* Tools Section */}
+        <div className="space-y-2">
+          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
+            <Pencil className="w-3 h-3" /> Drawing Tools
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {tools.map((tool) => {
+              const Icon = tool.icon;
+              const isActive = activeTool === tool.id;
+              return (
+                <button
+                  key={tool.id}
+                  onClick={() => onToolSelect(tool.id)}
+                  className={`group relative p-3 rounded-xl transition-all duration-300 flex flex-col items-center justify-center ${
+                    isActive
+                      ? `bg-gradient-to-br ${tool.gradient} text-white shadow-lg ring-2 ring-white/20`
+                      : 'text-gray-400 hover:bg-white/10 hover:text-white backdrop-blur-sm'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 mb-1 ${isActive ? 'animate-pulse' : ''}`} />
+                  <span className="text-[10px] font-medium">{tool.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Actions Section */}
+        <div className="space-y-2 pt-2 border-t border-white/10">
+          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
+            <Settings className="w-3 h-3" /> Map Actions
+          </h3>
+          <div className="space-y-2">
+            <button
+              onClick={onLocate}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors backdrop-blur-sm group"
+            >
+              <Target className="w-5 h-5 group-hover:animate-pulse" />
+              <span className="font-medium">My Location</span>
+            </button>
+            
+            <button
+              onClick={onClearAll}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-colors backdrop-blur-sm group"
+            >
+              <Trash2 className="w-5 h-5 group-hover:animate-pulse" />
+              <span className="font-medium">Clear All</span>
+            </button>
+            
+            <button
+              onClick={onExport}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-300 transition-colors backdrop-blur-sm group"
+            >
+              <Download className="w-5 h-5 group-hover:animate-pulse" />
+              <span className="font-medium">Export Map Data</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Legend Section */}
+        <div className="space-y-2 pt-2 border-t border-white/10">
+          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
+            <Layers className="w-3 h-3" /> Map Legend
+          </h3>
+          <div className="space-y-3 p-3 bg-black/50 rounded-xl border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.7)]"></div>
+              <span className="text-sm text-gray-300">Markers</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"></div>
+              <span className="text-sm text-gray-300">Paths</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 border-2 border-violet-500 bg-violet-500/20 rounded-sm"></div>
+              <span className="text-sm text-gray-300">Polygons</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 border-2 border-pink-500 bg-pink-500/20 rounded-full"></div>
+              <span className="text-sm text-gray-300">Zones</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Attribution Section */}
+        <div className="pt-4 border-t border-white/10 mt-4">
+          <div className="text-xs text-gray-500 space-y-2">
+            <div className="flex items-center gap-1.5">
+              <span>©</span>
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" 
+                 className="text-cyan-400 hover:underline transition-colors">
+                OpenStreetMap
+              </a>
+              <span>contributors</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span>©</span>
+              <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer" 
+                 className="text-cyan-400 hover:underline transition-colors">
+                CARTO
+              </a>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span>©</span>
+              <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer" 
+                 className="text-cyan-400 hover:underline transition-colors">
+                Esri
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Header Component
+const Header = ({ onBack, onToggleSidebar, isSidebarOpen }) => {
+  return (
+    <header className="h-16 bg-gradient-to-r from-black/90 to-black/70 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-6">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={onToggleSidebar}
+          className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {isSidebarOpen ? <ChevronLeft className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+        <button
+          onClick={onBack}
+          className="group flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md transition-all duration-300 hover:pr-6"
+        >
+          <ArrowLeft className="w-5 h-5 text-white" />
+          <span className="text-white font-medium opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all duration-300 overflow-hidden w-0 group-hover:w-auto">Back</span>
+        </button>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-sm px-4 py-1.5 rounded-full border border-cyan-500/20">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+          <span className="text-xs text-cyan-300 font-medium">System Online</span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center border-2 border-white/20">
+            <Navigation className="w-5 h-5 text-white animate-spin-slow" />
+          </div>
+          <div className="hidden lg:block">
+            <div className="text-white font-bold text-lg">MDRRMO Pio Duran Geospatial Portal</div>
+            <div className="text-xs text-gray-400">Albay, Philippines</div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
 // Main Interactive Map Component
 export const InteractiveMap = ({ onBack }) => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [activeTool, setActiveTool] = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const mapContainerRef = useRef(null);
@@ -369,14 +449,8 @@ export const InteractiveMap = ({ onBack }) => {
     setIsDarkMode(isDark);
   }, []);
 
-  const handleToggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      mapContainerRef.current?.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleLocate = () => {
@@ -419,144 +493,109 @@ export const InteractiveMap = ({ onBack }) => {
     // Implement export functionality
   };
 
-  const handleImport = () => {
-    toast.info('Import functionality coming soon');
-    // Implement import functionality
-  };
-
   const handleSearch = (result) => {
     setSearchResult(result);
   };
 
   return (
-    <div 
-      ref={mapContainerRef}
-      className="relative w-full h-screen bg-gray-900 overflow-hidden"
-    >
-      {/* Header Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-[1001] bg-gradient-to-b from-black/80 to-transparent p-4 pb-12 pointer-events-none">
-        <div className="flex items-center justify-between pointer-events-auto">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onBack}
-              className="group flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md transition-all duration-300 hover:pr-6"
+    <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
+      {/* Header */}
+      <Header 
+        onBack={onBack} 
+        onToggleSidebar={handleToggleSidebar}
+        isSidebarOpen={isSidebarOpen}
+      />
+      
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        {isSidebarOpen && (
+          <Sidebar
+            activeTool={activeTool}
+            onToolSelect={handleToolSelect}
+            onLocate={handleLocate}
+            onClearAll={handleClearAll}
+            onExport={handleExport}
+            onSearch={handleSearch}
+            isDarkMode={isDarkMode}
+            searchResult={searchResult}
+          />
+        )}
+        
+        {/* Map Container */}
+        <main className="flex-1 relative p-4">
+          <div className="relative h-full w-full bg-black/30 border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+            <MapContainer
+              center={PIO_DURAN_CENTER}
+              zoom={DEFAULT_ZOOM}
+              style={{ height: '100%', width: '100%' }}
+              zoomControl={false}
+              className="bg-gray-900"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
-              <span className="text-white font-medium opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all duration-300 overflow-hidden w-0 group-hover:w-auto">Back</span>
-            </button>
-            <div className="glass-effect-dark px-6 py-2 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md">
-              <h1 className="text-xl font-bold text-white tracking-wide">
-                <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">Interactive</span> Map
-              </h1>
-              <p className="text-xs text-gray-400 font-mono">Pio Duran, Albay • Geospatial System</p>
+              <LayersControl position="topright">
+                <LayersControl.BaseLayer checked name="OpenStreetMap">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Satellite">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Dark Matter">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Topographic">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                  />
+                </LayersControl.BaseLayer>
+              </LayersControl>
+
+              {/* Drawing Layer */}
+              <DrawingLayer activeTool={activeTool} />
+
+              {/* Coordinate Display */}
+              <CoordinateDisplay />
+
+              {/* Map Movement Handler */}
+              <MapMovementHandler searchResult={searchResult} />
+
+              {/* Search Result Marker */}
+              {searchResult && (
+                <Marker position={[searchResult.lat, searchResult.lng]}>
+                  <Popup className="custom-popup">
+                    <div className="font-semibold">{searchResult.name}</div>
+                  </Popup>
+                </Marker>
+              )}
+            </MapContainer>
+            
+            {/* Map Actions Overlay */}
+            <div className="absolute bottom-4 right-4 z-[1000] flex flex-col gap-3">
+              <button
+                onClick={handleLocate}
+                className="group bg-black/80 backdrop-blur-md rounded-full p-3 shadow-2xl border border-cyan-500/20 text-white hover:bg-cyan-600 transition-all duration-300 hover:scale-105"
+                title="My Location"
+              >
+                <Target className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleClearAll}
+                className="group bg-black/80 backdrop-blur-md rounded-full p-3 shadow-2xl border border-red-500/20 text-red-400 hover:bg-red-600 transition-all duration-300 hover:scale-105"
+                title="Clear All"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <div className="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-xs text-white/80 font-medium">System Online</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Map Container */}
-      <div className="absolute inset-0 z-0">
-        <MapContainer
-          center={PIO_DURAN_CENTER}
-          zoom={DEFAULT_ZOOM}
-          style={{ height: '100%', width: '100%' }}
-          zoomControl={false}
-          className="bg-gray-900"
-        >
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="OpenStreetMap">
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Satellite">
-              <TileLayer
-                attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Dark Matter">
-               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-              />
-            </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Topographic">
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-
-          {/* Drawing Layer */}
-          <DrawingLayer activeTool={activeTool} />
-
-          {/* Coordinate Display */}
-          <CoordinateDisplay />
-
-          {/* Map Movement Handler */}
-          <MapMovementHandler searchResult={searchResult} />
-
-          {/* Search Result Marker */}
-          {searchResult && (
-            <Marker position={[searchResult.lat, searchResult.lng]}>
-              <Popup className="custom-popup">
-                <div className="font-semibold">{searchResult.name}</div>
-              </Popup>
-            </Marker>
-          )}
-        </MapContainer>
-
-        {/* Map Controls */}
-        <MapControls
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={handleToggleFullscreen}
-          onLocate={handleLocate}
-          activeTool={activeTool}
-          onToolSelect={handleToolSelect}
-          isDarkMode={isDarkMode}
-          onClearAll={handleClearAll}
-          onExport={handleExport}
-          onImport={handleImport}
-        />
-
-        {/* Search Control */}
-        <SearchControl onSearch={handleSearch} />
-
-        {/* Legend/Info Panel */}
-        <div className="absolute bottom-8 right-16 z-[999] bg-black/80 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20 w-48 transition-all duration-300 hover:w-64 group">
-          <h3 className="font-bold text-xs text-white mb-3 flex items-center gap-2 uppercase tracking-widest border-b border-white/10 pb-2">
-            <Layers className="w-3 h-3 text-cyan-500" />
-            Legend
-          </h3>
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center gap-3 group/item">
-              <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-              <span className="text-gray-300 group-hover/item:text-white transition-colors">Markers</span>
-            </div>
-            <div className="flex items-center gap-3 group/item">
-              <div className="w-4 h-1 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-              <span className="text-gray-300 group-hover/item:text-white transition-colors">Paths</span>
-            </div>
-            <div className="flex items-center gap-3 group/item">
-              <div className="w-3 h-3 border-2 border-violet-500 bg-violet-500/20 rounded-sm"></div>
-              <span className="text-gray-300 group-hover/item:text-white transition-colors">Areas</span>
-            </div>
-            <div className="flex items-center gap-3 group/item">
-              <div className="w-3 h-3 border-2 border-pink-500 bg-pink-500/20 rounded-full"></div>
-              <span className="text-gray-300 group-hover/item:text-white transition-colors">Zones</span>
-            </div>
-          </div>
-        </div>
+        </main>
       </div>
     </div>
   );
