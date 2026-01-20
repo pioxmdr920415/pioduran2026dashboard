@@ -162,6 +162,12 @@ const SupplyInventory = ({ onBack }) => {
   const lowStockItems = supplies.filter(s => parseInt(s.quantity) < 5 && parseInt(s.quantity) > 0).length;
   const outOfStockItems = supplies.filter(s => parseInt(s.quantity) === 0).length;
 
+  // Print functionality
+  const handlePrint = () => {
+    window.print();
+    toast.success(`Printing ${searchQuery ? 'filtered' : 'all'} supply items...`);
+  };
+
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
       <BackgroundBlobs />
