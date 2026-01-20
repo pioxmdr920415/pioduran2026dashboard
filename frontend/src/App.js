@@ -8,6 +8,7 @@ import PhotoDocumentation from './components/PhotoDocumentation';
 import MapManagement from './components/MapManagement';
 import InteractiveMap from './components/InteractiveMap';
 import PanoramaGallery from './components/PanoramaGallery';
+import OfflineIndicator from './components/OfflineIndicator';
 import { Toaster } from './components/ui/sonner';
 import './App.css';
 
