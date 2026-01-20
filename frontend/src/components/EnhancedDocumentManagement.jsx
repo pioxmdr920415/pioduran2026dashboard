@@ -231,11 +231,10 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   // Handle share
   const handleShare = async (fileId) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/documents/share/${fileId}`);
-      if (response.data.success) {
-        navigator.clipboard.writeText(response.data.shareLink);
-        toast.success('Share link copied to clipboard!');
-      }
+      // Generate a standard Google Drive shareable link
+      const shareLink = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+      await navigator.clipboard.writeText(shareLink);
+      toast.success('Share link copied to clipboard!');
     } catch (error) {
       console.error('Error creating share link:', error);
       toast.error('Failed to create share link');
