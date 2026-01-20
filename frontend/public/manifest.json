@@ -1,7 +1,7 @@
 {
   "short_name": "MDRRMO Pio Duran",
   "name": "MDRRMO Pio Duran - File Inventory & Management System",
-  "description": "Complete file inventory and management system for MDRRMO Pio Duran with supply tracking, contact directory, calendar, documents, photos, maps, and panoramic galleries.",
+  "description": "Complete file inventory and management system for MDRRMO Pio Duran with supply tracking, contact directory, calendar, documents, photos, maps, and panoramic galleries. Works offline after installation.",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
@@ -55,7 +55,7 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "theme_color": "#7c3aed",
   "background_color": "#ffffff",
   "categories": ["business", "productivity", "utilities"],
@@ -67,5 +67,10 @@
       "form_factor": "wide"
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded"
+  }
 }
