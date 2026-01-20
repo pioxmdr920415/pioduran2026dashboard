@@ -26,8 +26,8 @@ import FolderTreeItem from './DocumentManagement/FolderTreeItem';
 import PhotoCard from './PhotoDocumentation/PhotoCard';
 import ImagePreviewModal from './PhotoDocumentation/ImagePreviewModal';
 import { getFolderStructure, getImagesFromFolder, isApiKeyConfigured } from '../services/googleDriveService';
-// Default Photo Documentation folder ID - update this with your actual folder ID
-const PHOTOS_ROOT_FOLDER_ID = '1XiPmUx8UZN5gdABHxHY2FI4AOz9Jney1';
+// Photo Documentation folder ID
+const PHOTOS_ROOT_FOLDER_ID = '1O1WlCjMvZ5lVcrOIGNMlBY4ZuQ-zEarg';
 
 // Loading skeleton with shimmer
 const PhotoCardSkeleton = () => (
