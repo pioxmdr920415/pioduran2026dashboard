@@ -49,46 +49,8 @@ const FileUploadModal = ({ isOpen, onClose, folderId, folderName, onUploadSucces
   const handleUpload = async () => {
     if (selectedFiles.length === 0) return;
 
-    setUploading(true);
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-
-    try {
-      let successCount = 0;
-      for (let i = 0; i < selectedFiles.length; i++) {
-        const file = selectedFiles[i];
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-          const response = await fetch(`${BACKEND_URL}/api/documents/upload/${folderId}`, {
-            method: 'POST',
-            body: formData,
-          });
-
-          if (response.ok) {
-            successCount++;
-          }
-        } catch (error) {
-          console.error(`Error uploading ${file.name}:`, error);
-        }
-
-        setUploadProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
-      }
-
-      if (successCount > 0) {
-        toast.success(`${successCount} file(s) uploaded successfully!`);
-        onUploadSuccess();
-        handleClose();
-      } else {
-        toast.error('Failed to upload files');
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload files');
-    } finally {
-      setUploading(false);
-      setUploadProgress(0);
-    }
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Uploading files is not available in SPA read-only mode. Please upload files directly in Google Drive.');
   };
 
   const handleClose = () => {
