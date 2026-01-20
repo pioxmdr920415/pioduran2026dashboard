@@ -59,7 +59,7 @@ yarn install              # Reinstall dependencies
 
 - **Frontend**: Port 3000 (internal)
 - **Backend**: Port 8001 (internal)
-- **Public URL**: https://import-execute.preview.emergentagent.com
+- **Public URL**: https://run-imported.preview.emergentagent.com
 - **API Docs**: {backend_url}/docs
 
 ## 📦 Technology Stack
