@@ -19,7 +19,8 @@ import {
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Printer
 } from 'lucide-react';
 import { toast } from 'sonner';
 import L from 'leaflet';
@@ -50,9 +51,9 @@ const CoordinateDisplay = () => {
   });
 
   return position ? (
-    <div className="absolute bottom-4 left-4 z-[1000] bg-black/80 backdrop-blur-md rounded-full px-4 py-2 shadow-xl border border-cyan-500/20 pointer-events-none">
-      <div className="flex items-center gap-3 text-xs text-white/90">
-        <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></div>
+    <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-md rounded-full px-4 py-2 shadow-md border border-blue-200 pointer-events-none">
+      <div className="flex items-center gap-3 text-xs text-gray-800">
+        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
         <span className="font-mono tracking-wider">
           {position.lat.toFixed(5)}° N, {position.lng.toFixed(5)}° E
         </span>
@@ -212,20 +213,20 @@ const SearchControl = ({ onSearch }) => {
   return (
     <form onSubmit={handleSearch} className="mb-6">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cyan-400 w-4 h-4" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 w-4 h-4" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search location..."
-          className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent outline-none text-white placeholder:text-gray-500 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 bg-white/40 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300 focus:border-transparent outline-none text-gray-800 placeholder:text-gray-500 transition-all"
           disabled={isSearching}
         />
         {searchQuery && (
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -251,6 +252,36 @@ const MapMovementHandler = ({ searchResult }) => {
   return null;
 };
 
+// Legend Overlay Component
+const LegendOverlay = () => {
+  return (
+    <div className="absolute bottom-8 right-16 z-[999] bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-gray-200 w-48 transition-all duration-300 hover:w-64 group">
+      <h3 className="font-bold text-xs text-gray-800 mb-3 flex items-center gap-2 uppercase tracking-widest border-b border-gray-200 pb-2">
+        <Layers className="w-3 h-3 text-blue-500" />
+        Legend
+      </h3>
+      <div className="space-y-2 text-xs">
+        <div className="flex items-center gap-3 group/item">
+          <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]"></div>
+          <span className="text-gray-600 group-hover/item:text-gray-800 transition-colors">Markers</span>
+        </div>
+        <div className="flex items-center gap-3 group/item">
+          <div className="w-4 h-1 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+          <span className="text-gray-600 group-hover/item:text-gray-800 transition-colors">Paths</span>
+        </div>
+        <div className="flex items-center gap-3 group/item">
+          <div className="w-3 h-3 border-2 border-violet-500 bg-violet-500/20 rounded-sm"></div>
+          <span className="text-gray-600 group-hover/item:text-gray-800 transition-colors">Areas</span>
+        </div>
+        <div className="flex items-center gap-3 group/item">
+          <div className="w-3 h-3 border-2 border-pink-500 bg-pink-500/20 rounded-full"></div>
+          <span className="text-gray-600 group-hover/item:text-gray-800 transition-colors">Zones</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Sidebar Component
 const Sidebar = ({ 
   activeTool,
@@ -258,8 +289,9 @@ const Sidebar = ({
   onLocate,
   onClearAll,
   onExport,
+  onImport,
+  onPrint,
   onSearch,
-  isDarkMode,
   searchResult
 }) => {
   const tools = [
@@ -271,17 +303,32 @@ const Sidebar = ({
   ];
 
   return (
-    <div className="bg-black/90 backdrop-blur-md border-r border-white/10 w-72 h-full flex flex-col p-4 overflow-y-auto">
+    <div className="bg-white/90 backdrop-blur-md border-r border-gray-200 w-72 h-full flex flex-col p-4 overflow-y-auto">
       <div className="space-y-6">
+        {/* Logo and Title */}
+        <div className="mb-6 pt-2 border-b border-gray-200 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <MapPin className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg text-gray-800">
+                MDRRMO GeoMapper
+              </h1>
+              <p className="text-xs text-gray-600">Pio Duran, Albay</p>
+            </div>
+          </div>
+        </div>
 
         {/* Search Section */}
         <div className="space-y-2">
+          <h3 className="text-xs uppercase text-gray-500 font-bold tracking-wider">Location Search</h3>
           <SearchControl onSearch={onSearch} />
         </div>
 
         {/* Tools Section */}
         <div className="space-y-2">
-          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
+          <h3 className="text-xs uppercase text-gray-500 font-bold tracking-wider flex items-center gap-2">
             <Pencil className="w-3 h-3" /> Drawing Tools
           </h3>
           <div className="grid grid-cols-2 gap-2">
@@ -294,8 +341,8 @@ const Sidebar = ({
                   onClick={() => onToolSelect(tool.id)}
                   className={`group relative p-3 rounded-xl transition-all duration-300 flex flex-col items-center justify-center ${
                     isActive
-                      ? `bg-gradient-to-br ${tool.gradient} text-white shadow-lg ring-2 ring-white/20`
-                      : 'text-gray-400 hover:bg-white/10 hover:text-white backdrop-blur-sm'
+                      ? `bg-gradient-to-br ${tool.gradient} text-white shadow-md ring-2 ring-blue-100`
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800 backdrop-blur-sm'
                   }`}
                 >
                   <Icon className={`w-5 h-5 mb-1 ${isActive ? 'animate-pulse' : ''}`} />
@@ -307,69 +354,60 @@ const Sidebar = ({
         </div>
 
         {/* Actions Section */}
-        <div className="space-y-2 pt-2 border-t border-white/10">
-          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
+        <div className="space-y-2 pt-2 border-t border-gray-200">
+          <h3 className="text-xs uppercase text-gray-500 font-bold tracking-wider flex items-center gap-2">
             <Settings className="w-3 h-3" /> Map Actions
           </h3>
           <div className="space-y-2">
             <button
               onClick={onLocate}
-              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors backdrop-blur-sm group"
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors backdrop-blur-sm group"
             >
-              <Target className="w-5 h-5 group-hover:animate-pulse" />
+              <Target className="w-5 h-5 group-hover:animate-pulse text-blue-500" />
               <span className="font-medium">My Location</span>
             </button>
             
             <button
               onClick={onClearAll}
-              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-colors backdrop-blur-sm group"
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors backdrop-blur-sm group"
             >
-              <Trash2 className="w-5 h-5 group-hover:animate-pulse" />
+              <Trash2 className="w-5 h-5 group-hover:animate-pulse text-red-500" />
               <span className="font-medium">Clear All</span>
             </button>
             
             <button
               onClick={onExport}
-              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-300 transition-colors backdrop-blur-sm group"
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors backdrop-blur-sm group"
             >
-              <Download className="w-5 h-5 group-hover:animate-pulse" />
+              <Download className="w-5 h-5 group-hover:animate-pulse text-green-500" />
               <span className="font-medium">Export Map Data</span>
+            </button>
+            
+            <button
+              onClick={onImport}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors backdrop-blur-sm group"
+            >
+              <Upload className="w-5 h-5 group-hover:animate-pulse text-yellow-500" />
+              <span className="font-medium">Import KML/GeoJSON</span>
+            </button>
+            
+            <button
+              onClick={onPrint}
+              className="w-full flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors backdrop-blur-sm group"
+            >
+              <Printer className="w-5 h-5 group-hover:animate-pulse text-purple-500" />
+              <span className="font-medium">Print Map</span>
             </button>
           </div>
         </div>
 
-        {/* Legend Section */}
-        <div className="space-y-2 pt-2 border-t border-white/10">
-          <h3 className="text-xs uppercase text-gray-400 font-bold tracking-wider flex items-center gap-2">
-            <Layers className="w-3 h-3" /> Map Legend
-          </h3>
-          <div className="space-y-3 p-3 bg-black/50 rounded-xl border border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.7)]"></div>
-              <span className="text-sm text-gray-300">Markers</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"></div>
-              <span className="text-sm text-gray-300">Paths</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 border-2 border-violet-500 bg-violet-500/20 rounded-sm"></div>
-              <span className="text-sm text-gray-300">Polygons</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 border-2 border-pink-500 bg-pink-500/20 rounded-full"></div>
-              <span className="text-sm text-gray-300">Zones</span>
-            </div>
-          </div>
-        </div>
-
         {/* Attribution Section */}
-        <div className="pt-4 border-t border-white/10 mt-4">
+        <div className="pt-4 border-t border-gray-200 mt-4">
           <div className="text-xs text-gray-500 space-y-2">
             <div className="flex items-center gap-1.5">
               <span>©</span>
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" 
-                 className="text-cyan-400 hover:underline transition-colors">
+                 className="text-blue-600 hover:underline transition-colors">
                 OpenStreetMap
               </a>
               <span>contributors</span>
@@ -377,14 +415,14 @@ const Sidebar = ({
             <div className="flex items-center gap-1.5">
               <span>©</span>
               <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer" 
-                 className="text-cyan-400 hover:underline transition-colors">
+                 className="text-blue-600 hover:underline transition-colors">
                 CARTO
               </a>
             </div>
             <div className="flex items-center gap-1.5">
               <span>©</span>
               <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer" 
-                 className="text-cyan-400 hover:underline transition-colors">
+                 className="text-blue-600 hover:underline transition-colors">
                 Esri
               </a>
             </div>
@@ -398,37 +436,37 @@ const Sidebar = ({
 // Header Component
 const Header = ({ onBack, onToggleSidebar, isSidebarOpen }) => {
   return (
-    <header className="h-16 bg-gradient-to-r from-black/90 to-black/70 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-6">
+    <header className="h-16 bg-gradient-to-r from-white/90 to-gray-50 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          className="p-1.5 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           {isSidebarOpen ? <ChevronLeft className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
         <button
           onClick={onBack}
-          className="group flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md transition-all duration-300 hover:pr-6"
+          className="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200 backdrop-blur-md transition-all duration-300 hover:pr-6"
         >
-          <ArrowLeft className="w-5 h-5 text-white" />
-          <span className="text-white font-medium opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all duration-300 overflow-hidden w-0 group-hover:w-auto">Back</span>
+          <ArrowLeft className="w-5 h-5 text-gray-800" />
+          <span className="text-gray-800 font-medium opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all duration-300 overflow-hidden w-0 group-hover:w-auto">Back</span>
         </button>
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="hidden md:flex items-center gap-2 bg-black/40 backdrop-blur-sm px-4 py-1.5 rounded-full border border-cyan-500/20">
+        <div className="hidden md:flex items-center gap-2 bg-gray-50 backdrop-blur-sm px-4 py-1.5 rounded-full border border-blue-200">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-xs text-cyan-300 font-medium">System Online</span>
+          <span className="text-xs text-green-700 font-medium">System Online</span>
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center border-2 border-white/20">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-white">
             <Navigation className="w-5 h-5 text-white animate-spin-slow" />
           </div>
           <div className="hidden lg:block">
-            <div className="text-white font-bold text-lg">MDRRMO Pio Duran Geospatial Portal</div>
-            <div className="text-xs text-gray-400">Albay, Philippines</div>
+            <div className="text-gray-900 font-bold text-lg">MDRRMO Pio Duran Geospatial Portal</div>
+            <div className="text-xs text-gray-600">Albay, Philippines</div>
           </div>
         </div>
       </div>
@@ -439,15 +477,9 @@ const Header = ({ onBack, onToggleSidebar, isSidebarOpen }) => {
 // Main Interactive Map Component
 export const InteractiveMap = ({ onBack }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [activeTool, setActiveTool] = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const mapContainerRef = useRef(null);
-
-  useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark');
-    setIsDarkMode(isDark);
-  }, []);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -493,12 +525,24 @@ export const InteractiveMap = ({ onBack }) => {
     // Implement export functionality
   };
 
+  const handleImport = () => {
+    toast.info('Select a KML or GeoJSON file to import');
+    // In a real implementation, this would trigger a file input dialog
+    // and process the selected file
+  };
+
+  const handlePrint = () => {
+    toast.success('Preparing map for printing...');
+    // In a real implementation, this would prepare the map for printing
+    // possibly by opening a print dialog or generating a PDF
+  };
+
   const handleSearch = (result) => {
     setSearchResult(result);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       {/* Header */}
       <Header 
         onBack={onBack} 
@@ -515,21 +559,22 @@ export const InteractiveMap = ({ onBack }) => {
             onLocate={handleLocate}
             onClearAll={handleClearAll}
             onExport={handleExport}
+            onImport={handleImport}
+            onPrint={handlePrint}
             onSearch={handleSearch}
-            isDarkMode={isDarkMode}
             searchResult={searchResult}
           />
         )}
         
         {/* Map Container */}
         <main className="flex-1 relative p-4">
-          <div className="relative h-full w-full bg-black/30 border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+          <div className="relative h-full w-full bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
             <MapContainer
               center={PIO_DURAN_CENTER}
               zoom={DEFAULT_ZOOM}
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
-              className="bg-gray-900"
+              className="bg-gray-100"
             >
               <LayersControl position="topright">
                 <LayersControl.BaseLayer checked name="OpenStreetMap">
@@ -577,21 +622,38 @@ export const InteractiveMap = ({ onBack }) => {
               )}
             </MapContainer>
             
+            {/* Legend Overlay */}
+            <LegendOverlay />
+            
             {/* Map Actions Overlay */}
             <div className="absolute bottom-4 right-4 z-[1000] flex flex-col gap-3">
               <button
                 onClick={handleLocate}
-                className="group bg-black/80 backdrop-blur-md rounded-full p-3 shadow-2xl border border-cyan-500/20 text-white hover:bg-cyan-600 transition-all duration-300 hover:scale-105"
+                className="group bg-white rounded-full p-3 shadow-md border border-blue-300 text-blue-600 hover:bg-blue-50 transition-all duration-300 hover:scale-105"
                 title="My Location"
               >
                 <Target className="w-5 h-5" />
               </button>
               <button
                 onClick={handleClearAll}
-                className="group bg-black/80 backdrop-blur-md rounded-full p-3 shadow-2xl border border-red-500/20 text-red-400 hover:bg-red-600 transition-all duration-300 hover:scale-105"
+                className="group bg-white rounded-full p-3 shadow-md border border-red-300 text-red-600 hover:bg-red-50 transition-all duration-300 hover:scale-105"
                 title="Clear All"
               >
                 <Trash2 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleImport}
+                className="group bg-white rounded-full p-3 shadow-md border border-yellow-300 text-yellow-600 hover:bg-yellow-50 transition-all duration-300 hover:scale-105"
+                title="Import KML/GeoJSON"
+              >
+                <Upload className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handlePrint}
+                className="group bg-white rounded-full p-3 shadow-md border border-purple-300 text-purple-600 hover:bg-purple-50 transition-all duration-300 hover:scale-105"
+                title="Print Map"
+              >
+                <Printer className="w-5 h-5" />
               </button>
             </div>
           </div>
