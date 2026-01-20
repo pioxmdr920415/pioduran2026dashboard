@@ -8,9 +8,19 @@ A beautiful, modern full-stack application for file inventory and management sys
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38bdf8)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4.5-47A248)
 
+## 🚀 Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/mdrrmo-pio-duran)
+
+**Ready for production deployment!** This app uses direct API calls to Google services (no backend proxy needed).
+
+📖 **Deployment Guides**: 
+- ⚡ [Quick Start (5 min)](VERCEL_QUICK_START.md) 
+- 📋 [Complete Guide](VERCEL_DEPLOYMENT_GUIDE.md)
+
 ## 📋 Overview
 
-This is a **full-stack application** featuring a modern, responsive dashboard for the MDRRMO Pio Duran File Inventory & Management System. The application features stunning UI/UX with animated gradients, glassmorphism effects, smooth interactions, and robust backend API integration with MongoDB, Google Drive, and Google Sheets.
+This is a **full-stack application** featuring a modern, responsive dashboard for the MDRRMO Pio Duran File Inventory & Management System. The application features stunning UI/UX with animated gradients, glassmorphism effects, smooth interactions, and **direct Google Drive/Sheets API integration** (no backend proxy for data operations).
 
 ## 🚀 Quick Start
 
