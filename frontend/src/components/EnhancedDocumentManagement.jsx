@@ -242,17 +242,9 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   };
 
   // File operations
-  const handleRenameFile = async (fileId, newName) => {
-    try {
-      await axios.put(`${BACKEND_URL}/api/documents/files/${fileId}/rename`, {
-        new_name: newName
-      });
-      toast.success('File renamed successfully');
-      fetchFiles(selectedFolderId);
-    } catch (error) {
-      console.error('Error renaming file:', error);
-      toast.error('Failed to rename file');
-    }
+  const handleRenameFile = async (_fileId, _newName) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Renaming files is not available in SPA read-only mode. Please rename files directly in Google Drive.');
   };
 
   const handleDeleteFile = async (fileId) => {
