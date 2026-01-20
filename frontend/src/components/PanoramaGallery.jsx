@@ -238,17 +238,67 @@ const PanoramaViewerModal = ({ image, onClose }) => {
       }}
     >
       {/* 360° Panorama Viewer */}
-      <div className="w-full h-full">
-        <ReactPannellum
-          id="panorama-viewer"
-          sceneId="main-scene"
-          imageSource={imageUrl}
-          config={config}
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-        />
+      <div className="w-full h-full relative">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
+            <div className="text-white text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+              <p>Loading 360° panorama...</p>
+            </div>
+          </div>
+        )}
+        
+        {imageError ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
+            <div className="text-white text-center max-w-md p-8">
+              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Unable to load 360° view</h3>
+              <p className="text-gray-400 mb-4">
+                This image may not be in panoramic format or there's a loading issue.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Button
+                  onClick={() => window.open(image.webViewLink, '_blank')}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  View Original
+                </Button>
+                <Button
+                  onClick={onClose}
+                  variant="outline"
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/20"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <ReactPannellum
+            id="panorama-viewer"
+            sceneId="main-scene"
+            imageSource={imageUrl}
+            type="equirectangular"
+            pitch={0}
+            yaw={180}
+            hfov={110}
+            autoLoad={true}
+            autoRotate={autoRotate}
+            showZoomCtrl={false}
+            showFullscreenCtrl={false}
+            mouseZoom={true}
+            draggable={true}
+            keyboardZoom={true}
+            friction={0.15}
+            compass={true}
+            orientationOnByDefault={false}
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          />
+        )}
       </div>
 
       {/* Control Overlay */}
