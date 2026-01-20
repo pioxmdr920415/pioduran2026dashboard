@@ -247,38 +247,14 @@ const EnhancedDocumentManagement = ({ onBack }) => {
     toast.info('Renaming files is not available in SPA read-only mode. Please rename files directly in Google Drive.');
   };
 
-  const handleDeleteFile = async (fileId) => {
-    try {
-      await axios.delete(`${BACKEND_URL}/api/documents/files/${fileId}`);
-      toast.success('File deleted successfully');
-      fetchFiles(selectedFolderId);
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      toast.error('Failed to delete file');
-    }
+  const handleDeleteFile = async (_fileId) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Deleting files is not available in SPA read-only mode. Please delete files directly in Google Drive.');
   };
 
-  const handleMoveFile = async (targetFolderId) => {
-    try {
-      const fileIds = moveFiles.map(f => f.id);
-      
-      if (fileIds.length === 1) {
-        await axios.post(`${BACKEND_URL}/api/documents/files/${fileIds[0]}/move`, {
-          target_folder_id: targetFolderId
-        });
-      } else {
-        await axios.post(`${BACKEND_URL}/api/documents/bulk/move`, {
-          file_ids: fileIds,
-          target_folder_id: targetFolderId
-        });
-      }
-      
-      toast.success(`${fileIds.length} file(s) moved successfully`);
-      fetchFiles(selectedFolderId);
-    } catch (error) {
-      console.error('Error moving file(s):', error);
-      toast.error('Failed to move file(s)');
-    }
+  const handleMoveFile = async (_targetFolderId) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Moving files is not available in SPA read-only mode. Please organize files directly in Google Drive.');
   };
 
   // Folder operations
