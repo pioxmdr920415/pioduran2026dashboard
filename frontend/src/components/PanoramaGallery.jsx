@@ -224,7 +224,9 @@ const PanoramaViewerModal = ({ image, onClose }) => {
   const handlePanoramaLoad = () => {
     setImageLoading(false);
     setImageError(null);
-    toast.success('360° Panorama loaded!');
+    toast.success('360° Panorama loaded successfully!', {
+      description: 'Drag to look around, scroll to zoom'
+    });
   };
 
   const handlePanoramaError = (err) => {
