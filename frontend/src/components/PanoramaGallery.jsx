@@ -135,10 +135,8 @@ const PanoramaViewerModal = ({ image, onClose }) => {
   const containerRef = useRef(null);
   const pannellumRef = useRef(null);
 
-  if (!image) return null;
-
   // Get high-resolution image URL from Google Drive
-  const imageUrl = `https://drive.google.com/uc?export=view&id=${image.id}`;
+  const imageUrl = image ? `https://drive.google.com/uc?export=view&id=${image.id}` : '';
 
   // Toggle fullscreen
   const toggleFullscreen = () => {
@@ -199,6 +197,24 @@ const PanoramaViewerModal = ({ image, onClose }) => {
     };
   }, []);
 
+  if (!image) return null;
+
+  const config = {
+    autoLoad: true,
+    autoRotate: autoRotate,
+    showZoomCtrl: false,
+    showFullscreenCtrl: false,
+    mouseZoom: true,
+    draggable: true,
+    keyboardZoom: true,
+    friction: 0.15,
+    compass: true,
+    orientationOnByDefault: false,
+    pitch: 0,
+    yaw: 180,
+    hfov: 110,
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -209,30 +225,14 @@ const PanoramaViewerModal = ({ image, onClose }) => {
     >
       {/* 360° Panorama Viewer */}
       <div className="w-full h-full">
-        <Pannellum
-          ref={pannellumRef}
-          width="100%"
-          height="100%"
-          image={imageUrl}
-          pitch={0}
-          yaw={180}
-          hfov={110}
-          autoLoad
-          autoRotate={autoRotate}
-          showZoomCtrl={false}
-          showFullscreenCtrl={false}
-          mouseZoom={true}
-          draggable={true}
-          keyboardZoom={true}
-          friction={0.15}
-          compass={true}
-          orientationOnByDefault={false}
-          onLoad={() => {
-            toast.success('360° Panorama loaded!');
-          }}
-          onError={(err) => {
-            console.error('Panorama load error:', err);
-            toast.error('Failed to load 360° view');
+        <ReactPannellum
+          id="panorama-viewer"
+          sceneId="main-scene"
+          imageSource={imageUrl}
+          config={config}
+          style={{
+            width: '100%',
+            height: '100%',
           }}
         />
       </div>
@@ -305,13 +305,14 @@ const PanoramaViewerModal = ({ image, onClose }) => {
 
           <Button
             onClick={() => {
-              // Reset view to default
-              if (pannellumRef.current) {
-                pannellumRef.current.getViewer()?.setPitch(0);
-                pannellumRef.current.getViewer()?.setYaw(180);
-                pannellumRef.current.getViewer()?.setHfov(110);
+              // Reset view to default using Pannellum API
+              const viewer = ReactPannellum.getViewer('panorama-viewer');
+              if (viewer) {
+                viewer.setPitch(0);
+                viewer.setYaw(180);
+                viewer.setHfov(110);
+                toast.success('View reset');
               }
-              toast.success('View reset');
             }}
             className="bg-white/10 hover:bg-white/20 text-white rounded-full w-14 h-14 p-0 backdrop-blur-sm"
             title="Reset View"
@@ -322,7 +323,7 @@ const PanoramaViewerModal = ({ image, onClose }) => {
 
         {/* Bottom Instruction Bar */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pointer-events-auto">
-          <div className="flex items-center justify-center gap-8 text-white/80 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-white/80 text-sm">
             <div className="flex items-center gap-2">
               <Move className="w-4 h-4" />
               <span>Drag to look around</span>
