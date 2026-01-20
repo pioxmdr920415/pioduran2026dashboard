@@ -161,8 +161,8 @@ const MapManagement = ({ onBack }) => {
   const [categories, setCategories] = useState({
     administrative: { name: 'Administrative Map', folder_id: '1Wh2wSQuyzHiz25Vbr4ICETj18RRUEpvi' },
     topographic: { name: 'Topographic Map', folder_id: '1Y01dJR_YJdixvsi_B9Xs7nQaXD31_Yn2' },
-    hazard: { name: 'Hazard Map', folder_id: '16xy_oUAr6sWb3JE9eNrxYJdAMDRKG' },
-    mgb: { name: 'MGB-Map', folder_id: '1yQmtrKfKiMOFA933W0emzeGoexMp' },
+    hazard: { name: 'Hazard Map', folder_id: '16xy_oUAr6sWb3JE9eNrxYJdAMDRKGYLn' },
+    mgb: { name: 'MGB-Map', folder_id: '16xy_oUAr6sWb3JE9eNrxYJdAMDRKGYLn' },
     mpdc: { name: 'MPDC-Map', folder_id: '1MI1aO_-gQwsRbSJsfHY2FI4AOz9Jney1' }
   });
   const [selectedFolderId, setSelectedFolderId] = useState(null);
