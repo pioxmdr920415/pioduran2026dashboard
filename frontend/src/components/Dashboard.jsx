@@ -135,6 +135,9 @@ export const Dashboard = ({ onOpenModule }) => {
       {/* Animated Background Blobs */}
       <BackgroundBlobs />
       
+      {/* PWA Install Prompt */}
+      <InstallPWA />
+      
       {/* Main Layout */}
       <div className="relative z-10 flex min-h-screen">
         {/* Main Content */}
