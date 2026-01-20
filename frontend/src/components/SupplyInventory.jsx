@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Package, MapPin, Hash, Tags, TrendingUp, AlertTriangle, CheckCircle, Box, Cloud, CloudOff, Printer } from 'lucide-react';
+import { 
+  ArrowLeft, Plus, Pencil, Trash2, Package, MapPin, Hash, Tags, 
+  TrendingUp, AlertTriangle, CheckCircle, Box, Cloud, CloudOff, 
+  Printer, LayoutGrid, List, ChevronDown, ChevronUp, Search 
+} from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Header } from './Header';
 import { BackgroundBlobs } from './BackgroundBlobs';
@@ -27,6 +33,9 @@ const SupplyInventory = ({ onBack }) => {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'table'
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [expandedRow, setExpandedRow] = useState(null);
 
   useEffect(() => {
     fetchSupplies();
@@ -36,14 +45,12 @@ const SupplyInventory = ({ onBack }) => {
     try {
       setIsLoading(true);
       
-      // Check if API key is configured
       if (!isApiKeyConfigured()) {
         toast.error('Google Sheets API key not configured. Please add REACT_APP_GOOGLE_SHEETS_API_KEY to .env file');
         setSupplies([]);
         return;
       }
       
-      // Fetch directly from Google Sheets
       const data = await getSupplyItems();
       setSupplies(data);
       toast.success(`Loaded ${data.length} items from Google Sheets!`);
@@ -54,6 +61,28 @@ const SupplyInventory = ({ onBack }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+    
+    const sorted = [...supplies].sort((a, b) => {
+      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+    setSupplies(sorted);
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <ChevronDown className="h-4 w-4 opacity-50" />;
+    return sortConfig.direction === 'asc' 
+      ? <ChevronUp className="h-4 w-4 text-primary" /> 
+      : <ChevronDown className="h-4 w-4 text-primary" />;
   };
 
   const handleOpenDialog = (supply = null) => {
@@ -141,19 +170,22 @@ const SupplyInventory = ({ onBack }) => {
       gradient: 'from-red-500 via-red-600 to-rose-600', 
       text: 'Out of Stock',
       icon: AlertTriangle,
-      pulse: true 
+      pulse: true,
+      color: 'red'
     };
     if (qty < 5) return { 
       gradient: 'from-yellow-500 via-orange-500 to-amber-600', 
       text: 'Low Stock',
       icon: AlertTriangle,
-      pulse: true 
+      pulse: true,
+      color: 'orange'
     };
     return { 
       gradient: 'from-green-500 via-emerald-500 to-teal-600', 
       text: 'In Stock',
       icon: CheckCircle,
-      pulse: false 
+      pulse: false,
+      color: 'green'
     };
   };
 
@@ -201,6 +233,22 @@ const SupplyInventory = ({ onBack }) => {
                       <Box className="h-4 w-4" />
                       Manage supplies and inventory levels
                     </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 ${viewMode === 'grid' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white' : 'border-cyan-400/20'}`}
+                    >
+                      <LayoutGrid className={`h-5 w-5 ${viewMode === 'grid' ? 'animate-pulse' : ''}`} />
+                    </Button>
+                    <Button
+                      variant={viewMode === 'table' ? 'default' : 'outline'}
+                      onClick={() => setViewMode('table')}
+                      className={`p-2 ${viewMode === 'table' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white' : 'border-cyan-400/20'}`}
+                    >
+                      <List className={`h-5 w-5 ${viewMode === 'table' ? 'animate-pulse' : ''}`} />
+                    </Button>
                   </div>
                 </div>
 
@@ -280,37 +328,42 @@ const SupplyInventory = ({ onBack }) => {
 
               {/* Enhanced Actions Bar */}
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <div className="flex-1 relative group">
+                <div className="relative flex-1 group">
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                  <Input
-                    type="text"
-                    placeholder="🔍 Search supplies by name, category, location..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="relative bg-card/50 backdrop-blur-sm border-cyan-400/20 focus:border-cyan-400 transition-all duration-300 h-12"
-                    data-testid="search-supplies-input"
-                  />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="🔍 Search supplies by name, category, location..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 relative bg-card/50 backdrop-blur-sm border-cyan-400/20 focus:border-cyan-400 transition-all duration-300 h-12"
+                      data-testid="search-supplies-input"
+                    />
+                  </div>
                 </div>
-                <Button
-                  onClick={handlePrint}
-                  variant="outline"
-                  className="border-2 border-cyan-400 text-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-950 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 h-12 px-6 print:hidden"
-                  data-testid="print-supply-btn"
-                >
-                  <Printer className="h-5 w-5 mr-2" />
-                  Print Report
-                </Button>
-                <Button
-                  onClick={() => handleOpenDialog()}
-                  className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 h-12 px-6"
-                  data-testid="add-supply-btn"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Add Supply
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handlePrint}
+                    variant="outline"
+                    className="border-2 border-cyan-400 text-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-950 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 h-12 px-4 print:hidden"
+                    data-testid="print-supply-btn"
+                  >
+                    <Printer className="h-5 w-5 mr-2" />
+                    Print
+                  </Button>
+                  <Button
+                    onClick={() => handleOpenDialog()}
+                    className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 h-12 px-6"
+                    data-testid="add-supply-btn"
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Add Supply
+                  </Button>
+                </div>
               </div>
 
-              {/* Enhanced Supplies Grid */}
+              {/* Enhanced Supplies Grid/Table Toggle */}
               {isLoading ? (
                 <div className="text-center py-12">
                   <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-cyan-400 border-t-transparent"></div>
@@ -325,13 +378,13 @@ const SupplyInventory = ({ onBack }) => {
                     {searchQuery ? 'No supplies found matching your search' : 'No supplies yet. Add your first supply item!'}
                   </p>
                 </div>
-              ) : (
+              ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="supplies-grid">
                   {filteredSupplies.map((supply, index) => {
                     const statusInfo = getStatusInfo(supply.quantity);
                     const StatusIcon = statusInfo.icon;
                     const quantity = parseInt(supply.quantity);
-                    const maxQuantity = 50; // For progress bar visualization
+                    const maxQuantity = 50;
                     const percentage = Math.min((quantity / maxQuantity) * 100, 100);
 
                     return (
@@ -344,16 +397,13 @@ const SupplyInventory = ({ onBack }) => {
                           animation: 'fadeInUp 0.6s ease-out forwards'
                         }}
                       >
-                        {/* Animated gradient border */}
                         <div className={`absolute inset-0 bg-gradient-to-r ${statusInfo.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl`}></div>
                         
-                        {/* Shimmer effect */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         
                         <CardHeader className="pb-3 relative">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3 flex-1">
-                              {/* Animated Icon */}
                               <div className="relative group-hover:scale-110 transition-transform duration-300">
                                 <div className={`absolute inset-0 bg-gradient-to-r ${statusInfo.gradient} rounded-xl ${statusInfo.pulse ? 'animate-pulse' : ''}`}></div>
                                 <div className={`relative h-14 w-14 rounded-xl bg-gradient-to-br ${statusInfo.gradient} flex items-center justify-center text-white shadow-lg m-0.5`}>
@@ -368,9 +418,9 @@ const SupplyInventory = ({ onBack }) => {
                                   {supply.itemName}
                                 </CardTitle>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className={`text-xs px-2 py-1 rounded-full bg-gradient-to-r ${statusInfo.gradient} text-white font-medium shadow-md ${statusInfo.pulse ? 'animate-pulse' : ''}`}>
+                                  <Badge variant="outline" className={`bg-${statusInfo.color}-500/10 text-${statusInfo.color}-600 border-${statusInfo.color}-500/20 hover:bg-${statusInfo.color}-500/20`}>
                                     {statusInfo.text}
-                                  </span>
+                                  </Badge>
                                 </div>
                               </div>
                             </div>
@@ -397,7 +447,6 @@ const SupplyInventory = ({ onBack }) => {
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                          {/* Quantity Display with Progress Bar */}
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
@@ -410,19 +459,14 @@ const SupplyInventory = ({ onBack }) => {
                               <TrendingUp className="h-5 w-5 text-green-500" />
                             </div>
                             
-                            {/* Animated Progress Bar */}
                             <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div 
                                 className={`absolute inset-y-0 left-0 bg-gradient-to-r ${statusInfo.gradient} rounded-full transition-all duration-1000 ease-out`}
-                                style={{ 
-                                  width: `${percentage}%`,
-                                  animation: 'slideIn 1s ease-out'
-                                }}
+                                style={{ width: `${percentage}%` }}
                               ></div>
                             </div>
                           </div>
                           
-                          {/* Category Badge */}
                           <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-cyan-400/5 to-blue-500/5 border border-cyan-400/10 hover:border-cyan-400/30 transition-all duration-300">
                             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-md">
                               <Tags className="h-4 w-4 text-white" />
@@ -433,7 +477,6 @@ const SupplyInventory = ({ onBack }) => {
                             </div>
                           </div>
                           
-                          {/* Location */}
                           <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-blue-400/5 to-indigo-500/5 border border-blue-400/10 hover:border-blue-400/30 transition-all duration-300">
                             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shadow-md">
                               <MapPin className="h-4 w-4 text-white" />
@@ -445,11 +488,155 @@ const SupplyInventory = ({ onBack }) => {
                           </div>
                         </CardContent>
                         
-                        {/* Decorative corner gradient */}
                         <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-cyan-400/20 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       </Card>
                     );
                   })}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-cyan-400/20 bg-card/50 backdrop-blur-sm overflow-hidden animate-fade-in">
+                  <Table>
+                    <TableHeader className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
+                      <TableRow>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-cyan-400/10 transition-colors"
+                          onClick={() => handleSort('itemName')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Item Name {getSortIcon('itemName')}
+                          </div>
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-cyan-400/10 transition-colors"
+                          onClick={() => handleSort('category')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Category {getSortIcon('category')}
+                          </div>
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-cyan-400/10 transition-colors"
+                          onClick={() => handleSort('quantity')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Quantity {getSortIcon('quantity')}
+                          </div>
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-cyan-400/10 transition-colors"
+                          onClick={() => handleSort('location')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Location {getSortIcon('location')}
+                          </div>
+                        </TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="w-[100px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredSupplies.map((supply) => {
+                        const statusInfo = getStatusInfo(supply.quantity);
+                        const StatusIcon = statusInfo.icon;
+                        const quantity = parseInt(supply.quantity);
+                        const maxQuantity = 50;
+                        const percentage = Math.min((quantity / maxQuantity) * 100, 100);
+                        
+                        return (
+                          <React.Fragment key={supply.row_index}>
+                            <TableRow 
+                              className="border-b border-cyan-400/10 hover:bg-cyan-400/5 transition-colors cursor-pointer"
+                              onClick={() => setExpandedRow(expandedRow === supply.row_index ? null : supply.row_index)}
+                            >
+                              <TableCell className="font-medium">{supply.itemName}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+                                  {supply.category}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold">{supply.quantity}</span>
+                                    <span className="text-xs text-muted-foreground">{supply.unit}</span>
+                                  </div>
+                                  <div className="relative h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div 
+                                      className={`absolute inset-y-0 left-0 ${statusInfo.gradient} rounded-full`}
+                                      style={{ width: `${percentage}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>{supply.location}</TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <StatusIcon className={`h-4 w-4 ${statusInfo.color}-500`} />
+                                  <span className={`text-sm font-medium ${statusInfo.color}-600`}>{statusInfo.text}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 hover:bg-cyan-400/20 hover:text-cyan-600"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenDialog(supply);
+                                    }}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 hover:bg-red-400/20 text-destructive"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(supply);
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                            
+                            {expandedRow === supply.row_index && (
+                              <TableRow className="bg-gradient-to-r from-cyan-400/5 to-blue-500/5 animate-slide-down">
+                                <TableCell colSpan={6} className="p-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="space-y-2 p-3 bg-card/50 rounded-lg border border-cyan-400/20">
+                                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                        <Tags className="h-4 w-4" />
+                                        <span>Category Details</span>
+                                      </div>
+                                      <p className="text-lg font-semibold">{supply.category}</p>
+                                    </div>
+                                    <div className="space-y-2 p-3 bg-card/50 rounded-lg border border-cyan-400/20">
+                                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                        <Box className="h-4 w-4" />
+                                        <span>Storage Details</span>
+                                      </div>
+                                      <p className="text-lg font-semibold">{supply.location}</p>
+                                    </div>
+                                    <div className="space-y-2 p-3 bg-card/50 rounded-lg border border-cyan-400/20">
+                                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                        <TrendingUp className="h-4 w-4" />
+                                        <span>Stock History</span>
+                                      </div>
+                                      <p className="text-lg font-semibold">Last updated: Today</p>
+                                    </div>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
                 </div>
               )}
             </div>
@@ -595,9 +782,23 @@ const SupplyInventory = ({ onBack }) => {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-down {
+          from { height: 0; opacity: 0; }
+          to { height: auto; opacity: 1; }
+        }
         .animate-gradient {
           background-size: 200% auto;
           animation: gradient 3s ease infinite;
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
+        .animate-slide-down {
+          animation: slide-down 0.3s ease-out forwards;
         }
 
         /* Print Styles */
@@ -612,18 +813,17 @@ const SupplyInventory = ({ onBack }) => {
             -webkit-print-color-adjust: exact;
           }
 
-          /* Hide non-printable elements */
           .print\\:hidden,
           button:not(.print-show),
           [data-testid="back-to-dashboard-btn"],
           [data-testid="add-supply-btn"],
           [data-testid="print-supply-btn"],
           [data-testid="search-supplies-input"],
-          .bg-gradient-to-r.blur-3xl {
+          .bg-gradient-to-r.blur-3xl,
+          .view-toggle-container {
             display: none !important;
           }
 
-          /* Show print header */
           .print-header {
             display: block !important;
             margin-bottom: 20px;
@@ -642,7 +842,6 @@ const SupplyInventory = ({ onBack }) => {
             color: #666;
           }
 
-          /* Print table view */
           .print-table {
             display: table !important;
             width: 100%;
@@ -679,12 +878,10 @@ const SupplyInventory = ({ onBack }) => {
             font-size: 11px;
           }
 
-          /* Hide card grid, show table */
           [data-testid="supplies-grid"] {
             display: none !important;
           }
 
-          /* Stats cards in print */
           .grid.grid-cols-1.md\\:grid-cols-3 {
             display: flex !important;
             gap: 10px;
@@ -696,7 +893,6 @@ const SupplyInventory = ({ onBack }) => {
             page-break-inside: avoid;
           }
 
-          /* Simplify backgrounds */
           main {
             background: white !important;
           }
@@ -709,7 +905,6 @@ const SupplyInventory = ({ onBack }) => {
         }
       `}</style>
 
-      {/* Hidden Print View */}
       <div className="hidden print:block print-header">
         <div className="flex items-center justify-between">
           <div>
@@ -723,7 +918,6 @@ const SupplyInventory = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Print Table View */}
       <table className="hidden print-table">
         <thead>
           <tr>
