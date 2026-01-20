@@ -59,7 +59,7 @@ yarn install              # Reinstall dependencies
 
 - **Frontend**: Port 3000 (internal)
 - **Backend**: Port 8001 (internal)
-- **Public URL**: https://repo-runner-25.preview.emergentagent.com
+- **Public URL**: https://repo-import-run.preview.emergentagent.com
 - **API Docs**: {backend_url}/docs
 
 ## 📦 Technology Stack
