@@ -57,6 +57,7 @@ export const App = () => {
     <>
       <OfflineIndicator />
       {renderView()}
+      <AIChatbot />
       <Toaster />
     </>
   );
