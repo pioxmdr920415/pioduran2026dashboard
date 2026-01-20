@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ArrowLeft, Plus, Pencil, Trash2, Package, MapPin, Hash, Tags, 
   TrendingUp, AlertTriangle, CheckCircle, Box, Cloud, CloudOff, 
-  Printer, LayoutGrid, List, ChevronDown, ChevronUp, Search 
+  Printer, LayoutGrid, List, ChevronDown, ChevronUp, Search, RefreshCw
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -15,7 +15,7 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Header } from './Header';
 import { BackgroundBlobs } from './BackgroundBlobs';
-import { getSupplyItems, isApiKeyConfigured } from '../services/googleSheetsService';
+import { getSupplyItems, isApiKeyConfigured, invalidateCache } from '../services/optimizedGoogleSheetsService';
 
 const SupplyInventory = ({ onBack }) => {
   const [supplies, setSupplies] = useState([]);
