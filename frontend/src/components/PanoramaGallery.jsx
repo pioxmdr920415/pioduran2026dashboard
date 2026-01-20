@@ -230,16 +230,20 @@ const PanoramaViewerModal = ({ image, onClose }) => {
   const handlePanoramaError = (err) => {
     console.error('Panorama load error:', err, 'URL attempt:', urlAttempt);
     
-    // Try next URL format
-    if (urlAttempt < 2) {
+    // Try next URL format (we now have 4 attempts)
+    if (urlAttempt < 3) {
       setUrlAttempt(prev => prev + 1);
       setImageLoading(true);
       setImageError(null);
-      toast.info(`Trying alternative loading method (${urlAttempt + 2}/3)...`);
+      toast.info(`Trying alternative loading method (${urlAttempt + 2}/4)...`, {
+        duration: 2000
+      });
     } else {
       setImageLoading(false);
-      setImageError(err);
-      toast.error('Unable to load 360° view. Please try viewing the original image.');
+      setImageError('Unable to load panorama image');
+      toast.error('Could not load 360° view. The image may not be publicly accessible.', {
+        description: 'Please ensure the Google Drive file is shared with "Anyone with the link"'
+      });
     }
   };
 
