@@ -71,7 +71,7 @@ const parseSheetData = (values) => {
 };
 
 /**
- * Get data from a Google Sheet tab/worksheet
+ * Get data from a Google Sheet tab/worksheet with offline support
  * @param {string} sheetName - Name of the sheet tab (e.g., 'supply', 'contact', 'event')
  * @param {string} range - Optional range (default: entire sheet)
  * @returns {Promise<Array<Object>>} Array of data objects
@@ -93,9 +93,29 @@ export const getSheetData = async (sheetName, range = null) => {
     }
 
     const data = await response.json();
-    return parseSheetData(data.values || []);
+    const parsedData = parseSheetData(data.values || []);
+    
+    // Cache the data for offline use
+    try {
+      await cacheSheetData(sheetName, parsedData);
+      console.log(`✅ Cached ${sheetName} data for offline use`);
+    } catch (cacheError) {
+      console.warn('Failed to cache data:', cacheError);
+    }
+    
+    return parsedData;
   } catch (error) {
     console.error('Error in getSheetData:', error);
+    
+    // If offline or fetch failed, try to get cached data
+    if (!navigator.onLine || error.message.includes('Failed to fetch')) {
+      console.log('📱 Offline mode: Loading cached data for', sheetName);
+      const cachedData = await getCachedSheetData(sheetName);
+      if (cachedData) {
+        return cachedData;
+      }
+    }
+    
     throw error;
   }
 };
