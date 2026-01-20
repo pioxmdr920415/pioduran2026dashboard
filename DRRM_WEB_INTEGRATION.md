@@ -19,7 +19,7 @@ The DRRM-Web quick access button on the Dashboard has been configured to navigat
 #### Click Behavior
 ```javascript
 onClick={() => {
-  window.open('https://mdrrmo-pioduran-goa8xfvkt-mdrrmo4518-7282s-projects.vercel.app/', 
+  window.open('https://mdrrmo-pioduran.vercel.app/', 
     '_blank', 
     'noopener,noreferrer'
   );
@@ -56,7 +56,7 @@ onClick={() => {
 
 **Target URL**: 
 ```
-https://mdrrmo-pioduran-goa8xfvkt-mdrrmo4518-7282s-projects.vercel.app/
+https://mdrrmo-pioduran.vercel.app/
 ```
 
 ### URL Details

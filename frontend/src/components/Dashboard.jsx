@@ -178,7 +178,7 @@ export const Dashboard = ({ onOpenModule }) => {
                               } else if (item.id === 'panorama') {
                                 onOpenModule('panorama');
                               } else if (item.id === 'drrm-web') {
-                                window.open('https://mdrrmo-pioduran-goa8xfvkt-mdrrmo4518-7282s-projects.vercel.app/', '_blank', 'noopener,noreferrer');
+                                window.open('https://mdrrmo-pioduran.vercel.app/', '_blank', 'noopener,noreferrer');
                                 toast.success('Opening DRRM-Web in new tab...');
                               } else {
                                 toast.info(`${item.label} - Coming soon!`);

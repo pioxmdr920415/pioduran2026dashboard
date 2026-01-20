@@ -562,7 +562,7 @@ backend:
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Updated DRRM-Web quick access button to navigate to external URL: https://mdrrmo-pioduran-goa8xfvkt-mdrrmo4518-7282s-projects.vercel.app/. Button now opens link in new tab with security attributes (noopener, noreferrer). Shows success toast notification 'Opening DRRM-Web in new tab...' when clicked. Frontend hot reload will apply changes."
+        comment: "Updated DRRM-Web quick access button to navigate to external URL: https://mdrrmo-pioduran.vercel.app/. Button now opens link in new tab with security attributes (noopener, noreferrer). Shows success toast notification 'Opening DRRM-Web in new tab...' when clicked. Frontend hot reload will apply changes."
 
   - task: "Progressive Web App (PWA) Installation Feature"
     implemented: true
