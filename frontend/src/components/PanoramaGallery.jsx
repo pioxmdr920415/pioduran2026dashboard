@@ -672,7 +672,7 @@ const PanoramaGallery = ({ onBack }) => {
               <ImageCard 
                 key={image.id} 
                 image={image} 
-                onClick={setPreviewImage}
+                onClick={handleImageClick}
               />
             ))}
           </div>
