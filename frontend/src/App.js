@@ -3,7 +3,7 @@ import Dashboard from './components/Dashboard';
 import SupplyInventory from './components/SupplyInventory';
 import ContactDirectory from './components/ContactDirectory';
 import CalendarManagement from './components/CalendarManagement';
-import DocumentManagement from './components/DocumentManagement';
+import EnhancedDocumentManagement from './components/EnhancedDocumentManagement';
 import PhotoDocumentation from './components/PhotoDocumentation';
 import MapManagement from './components/MapManagement';
 import InteractiveMap from './components/InteractiveMap';
