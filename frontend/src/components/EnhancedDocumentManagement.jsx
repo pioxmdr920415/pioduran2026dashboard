@@ -683,7 +683,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                    <Button 
                      variant="outline" 
                      className="mt-6 border-blue-200 text-blue-600 hover:bg-blue-50"
-                     onClick={() => setUploadModalOpen(true)}
+                     onClick={() => toast.info('Uploading files is not available in SPA read-only mode. Please upload files directly in Google Drive.')}
                    >
                      <Upload className="w-4 h-4 mr-2" />
                      Upload Now
