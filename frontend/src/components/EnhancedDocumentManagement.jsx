@@ -51,7 +51,8 @@ import RenameDialog from './DocumentManagement/RenameDialog';
 import MoveDialog from './DocumentManagement/MoveDialog';
 import CreateFolderDialog from './DocumentManagement/CreateFolderDialog';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+// Document Management folder ID (Google Drive root for documents)
+const DOCUMENTS_ROOT_FOLDER_ID = '15_xiFeXu_vdIe2CYrjGaRCAho2OqhGvo';
 
 // Loading skeleton with shimmer
 const FileCardSkeleton = () => (
