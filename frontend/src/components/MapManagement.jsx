@@ -429,85 +429,16 @@ const MapManagement = ({ onBack }) => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredMaps.map((map, index) => {
-                  const badge = getMapTypeBadge(map.mimeType);
-                  return (
-                    <Card 
-                      key={map.id} 
-                      className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-teal-100/50 overflow-hidden"
-                      style={{
-                        animationDelay: `${index * 0.05}s`,
-                        animation: 'fadeInUp 0.5s ease-out forwards'
-                      }}
-                    >
-                      <CardContent className="p-4">
-                        {/* Thumbnail */}
-                        <div 
-                          className="relative h-48 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4 overflow-hidden cursor-pointer shadow-inner"
-                          onClick={() => handleViewMap(map)}
-                        >
-                          {map.thumbnailLink ? (
-                            <img
-                              src={map.thumbnailLink}
-                              alt={map.name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700">
-                              <MapIcon className="w-12 h-12 text-teal-200 dark:text-gray-600" />
-                            </div>
-                          )}
-                          <div className="absolute top-2 right-2">
-                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold tracking-wider shadow-sm ${badge.color}`}>
-                              {badge.label}
-                            </span>
-                          </div>
-                          
-                          {/* Hover Overlay */}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <Button size="sm" className="bg-white/20 backdrop-blur-md text-white border border-white/40 hover:bg-white/30">
-                              View Map
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Map Info */}
-                        <h3 className="font-bold text-gray-900 dark:text-white mb-2 truncate group-hover:text-teal-600 transition-colors" title={map.name}>
-                          {map.name}
-                        </h3>
-                        <div className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 mb-4 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-100 dark:border-gray-700">
-                          <div className="flex justify-between">
-                            <span>Modified:</span>
-                            <span className="font-medium">{new Date(map.modifiedTime).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Size:</span>
-                            <span className="font-medium">{(parseInt(map.size) / 1024 / 1024).toFixed(2)} MB</span>
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleViewMap(map)}
-                            className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white shadow-md hover:shadow-lg transition-all"
-                            size="sm"
-                          >
-                            View
-                          </Button>
-                          <Button
-                            onClick={() => window.open(map.webViewLink, '_blank')}
-                            variant="outline"
-                            className="flex-1 border-teal-200 text-teal-700 hover:bg-teal-50 dark:border-gray-600 dark:text-gray-300"
-                            size="sm"
-                          >
-                            Drive
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                {filteredMaps.map((map, index) => (
+                  <MapCard
+                    key={map.id}
+                    map={map}
+                    onPreview={handleViewMap}
+                    onDownload={handleDownload}
+                    onShare={handleShare}
+                    index={index}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -516,13 +447,14 @@ const MapManagement = ({ onBack }) => {
 
       {/* Preview Modal */}
       {previewMap && (
-        <ImagePreviewModal
+        <MapPreviewModal
           open={previewModalOpen}
           onClose={() => {
             setPreviewModalOpen(false);
             setPreviewMap(null);
           }}
-          image={previewMap}
+          map={previewMap}
+          onDownload={handleDownload}
         />
       )}
     </div>
