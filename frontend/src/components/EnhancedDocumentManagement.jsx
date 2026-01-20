@@ -494,7 +494,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                 <Button
                   className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
                   size="sm"
-                  onClick={() => setUploadModalOpen(true)}
+                  onClick={() => toast.info('Uploading files is not available in SPA read-only mode. Please upload files directly in Google Drive.')}
                   disabled={!selectedFolderId}
                 >
                   <Upload className="w-4 h-4 mr-2" />
