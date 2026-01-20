@@ -17,7 +17,7 @@ import {
   Move,
   Compass
 } from 'lucide-react';
-import { Pannellum } from 'react-pannellum';
+import ReactPannellum from 'react-pannellum';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
