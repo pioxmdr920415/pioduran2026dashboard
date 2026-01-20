@@ -55,8 +55,18 @@ yarn build
 │   ├── build/            # Production build (generated)
 │   ├── .env             # API keys configuration
 │   └── package.json      # Dependencies
+├── Docs/                 # Documentation folder
+│   ├── Quick start guides
+│   ├── Deployment guides
+│   ├── API setup guides
+│   └── Feature documentation
+├── Extra-Files/          # Additional files (archived)
+│   ├── Documentation/   # Historical docs
+│   ├── Scripts/         # Utility scripts
+│   └── Testing/         # Test files
 ├── package.json          # Root scripts
-└── docs/                # Documentation files
+├── vercel.json          # Vercel configuration
+└── README.md            # This file
 ```
 
 ## ⚡ Key Links
