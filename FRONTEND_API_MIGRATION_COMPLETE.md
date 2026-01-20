@@ -137,7 +137,7 @@ REACT_APP_GOOGLE_SHEETS_API_KEY=AIzaSyBTZH_0wi2svXNNQX696bA2Knj_7VXZ4CM
 REACT_APP_GOOGLE_SHEET_ID=1UtT9t2LZ5NEc-wbGv44mDeDjWLxOLBQHA5yy6jiLc7E
 
 # Backend URL (still used for some admin functions if needed)
-REACT_APP_BACKEND_URL=https://depend-load-start.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://dep-setup-runner.preview.emergentagent.com
 ```
 
 ---
