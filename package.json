@@ -10,7 +10,7 @@
     "install": "yarn install:all",
     "install:all": "yarn install:frontend && yarn install:backend",
     "install:frontend": "cd frontend && yarn install",
-    "install:backend": "cd backend && pip install -r requirements.txt",
+    "install:backend": "bash /app/install_backend_fixed.sh",
     "build": "yarn build:frontend",
     "build:frontend": "cd frontend && yarn build",
     "start": "sudo supervisorctl restart all",
