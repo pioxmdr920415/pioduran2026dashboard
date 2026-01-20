@@ -1,8 +1,9 @@
 /**
- * Google Sheets Service - Direct Frontend API Integration
+ * Google Sheets Service - Direct Frontend API Integration with Offline Support
  * 
  * This service provides direct access to Google Sheets API from the frontend,
  * allowing real-time data fetching and updates without backend proxy.
+ * Now includes offline caching for full PWA support.
  * 
  * Prerequisites:
  * 1. Enable Google Sheets API in Google Cloud Console
@@ -10,6 +11,8 @@
  * 3. Add API key to .env as REACT_APP_GOOGLE_SHEETS_API_KEY
  * 4. Make sure the Google Sheet is publicly accessible or shared with service account
  */
+
+import { cacheSheetData, getCachedSheetData } from './offlineStorage';
 
 const API_KEY = process.env.REACT_APP_GOOGLE_SHEETS_API_KEY || process.env.REACT_APP_GOOGLE_DRIVE_API_KEY;
 const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
