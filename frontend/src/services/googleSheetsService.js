@@ -104,17 +104,31 @@ export const getSheetData = async (sheetName, range = null) => {
 export const getSupplyItems = async () => {
   try {
     const data = await getSheetData('supply');
-    return data.map(item => ({
-      ...item,
-      quantity: parseInt(item.quantity) || 0,
-      // Calculate stock level
-      stockLevel: (() => {
-        const qty = parseInt(item.quantity) || 0;
-        if (qty === 0) return 'out-of-stock';
-        if (qty < 10) return 'low';
-        return 'good';
-      })()
-    }));
+    return data.map(item => {
+      // Map Google Sheets columns to expected field names
+      const itemName = item['Item Name'] || item.itemname || item.ItemName || '';
+      const category = item['Category'] || item.category || '';
+      const quantity = parseInt(item['Quantity'] || item.quantity || 0);
+      const unit = item['Unit'] || item.unit || '';
+      const location = item['Location'] || item.location || '';
+      const status = item['Status'] || item.status || '';
+      
+      return {
+        ...item,
+        itemName,
+        category,
+        quantity,
+        unit,
+        location,
+        status,
+        // Calculate stock level
+        stockLevel: (() => {
+          if (quantity === 0) return 'out-of-stock';
+          if (quantity < 10) return 'low';
+          return 'good';
+        })()
+      };
+    });
   } catch (error) {
     console.error('Error fetching supply items:', error);
     throw error;
