@@ -104,17 +104,22 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   const fetchFolderStructure = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/documents/folders`);
-      setFolderStructure(response.data);
+      if (!isApiKeyConfigured()) {
+        throw new Error('Google Drive API key is not configured. Please add REACT_APP_GOOGLE_DRIVE_API_KEY to your .env file.');
+      }
+
+      const structure = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3);
+      setFolderStructure(structure);
+
       // Auto-select root folder if none selected
       if (!selectedFolderId) {
-        setSelectedFolderId(response.data.id);
-        setSelectedFolderName(response.data.name);
-        fetchFiles(response.data.id);
+        setSelectedFolderId(structure.id);
+        setSelectedFolderName(structure.name);
+        fetchFiles(structure.id);
       }
     } catch (error) {
       console.error('Error fetching folder structure:', error);
-      toast.error('Failed to load folder structure');
+      toast.error(error.message || 'Failed to load folder structure');
     } finally {
       setLoading(false);
     }
