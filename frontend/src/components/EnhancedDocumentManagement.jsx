@@ -258,31 +258,14 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   };
 
   // Folder operations
-  const handleCreateFolder = async (folderName, parentId) => {
-    try {
-      await axios.post(`${BACKEND_URL}/api/documents/folders`, {
-        name: folderName,
-        parent_id: parentId
-      });
-      toast.success('Folder created successfully');
-      fetchFolderStructure();
-    } catch (error) {
-      console.error('Error creating folder:', error);
-      toast.error('Failed to create folder');
-    }
+  const handleCreateFolder = async (_folderName, _parentId) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Creating folders is not available in SPA read-only mode. Please create folders directly in Google Drive.');
   };
 
-  const handleRenameFolder = async (folderId, newName) => {
-    try {
-      await axios.put(`${BACKEND_URL}/api/documents/folders/${folderId}/rename`, {
-        new_name: newName
-      });
-      toast.success('Folder renamed successfully');
-      fetchFolderStructure();
-    } catch (error) {
-      console.error('Error renaming folder:', error);
-      toast.error('Failed to rename folder');
-    }
+  const handleRenameFolder = async (_folderId, _newName) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Renaming folders is not available in SPA read-only mode. Please rename folders directly in Google Drive.');
   };
 
   const handleDeleteFolder = async (folderId) => {
