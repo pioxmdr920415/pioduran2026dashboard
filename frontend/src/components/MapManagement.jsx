@@ -22,8 +22,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import PhotoCard from './PhotoDocumentation/PhotoCard';
-import ImagePreviewModal from './PhotoDocumentation/ImagePreviewModal';
+import MapCard from './MapManagement/MapCard';
+import MapPreviewModal from './MapManagement/MapPreviewModal';
 import { 
   getFolderStructure, 
   listFilesInFolder, 
