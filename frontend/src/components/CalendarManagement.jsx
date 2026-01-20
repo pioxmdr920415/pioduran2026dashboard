@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Calendar as CalendarIcon, Clock, MapPin, Tag, Sparkles, CalendarDays, Timer, Cloud, CloudOff } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowLeft, Plus, Pencil, Trash2, Calendar as CalendarIcon, Clock, MapPin, Tag, Sparkles, CalendarDays, Timer, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -10,7 +10,7 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Header } from './Header';
 import { BackgroundBlobs } from './BackgroundBlobs';
-import { getEventItems, isApiKeyConfigured } from '../services/googleSheetsService';
+import { getEventItems, isApiKeyConfigured } from '../services/optimizedGoogleSheetsService';
 
 const STATUS_OPTIONS = ['Upcoming', 'In Progress', 'Completed', 'Cancelled'];
 
@@ -44,6 +44,8 @@ const STATUS_COLORS = {
 const CalendarManagement = ({ onBack }) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dataSource, setDataSource] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
@@ -58,13 +60,13 @@ const CalendarManagement = ({ onBack }) => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async (forceRefresh = false) => {
     try {
-      setIsLoading(true);
+      if (forceRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
       
       // Check if API key is configured
       if (!isApiKeyConfigured()) {
@@ -73,17 +75,37 @@ const CalendarManagement = ({ onBack }) => {
         return;
       }
       
-      // Fetch directly from Google Sheets
-      const data = await getEventItems();
-      setEvents(data);
-      toast.success(`Loaded ${data.length} events from Google Sheets!`);
+      // Fetch with optimized caching
+      const result = await getEventItems({
+        forceRefresh,
+        onUpdate: (freshData) => {
+          setEvents(freshData);
+          setDataSource('network-update');
+          toast.success('Events refreshed in background!', { duration: 2000 });
+        }
+      });
+      
+      setEvents(result.data);
+      setDataSource(result.source);
+      
+      const sourceLabel = result.source?.includes('cache') ? '⚡ (cached)' : '🌐 (live)';
+      toast.success(`Loaded ${result.data.length} events ${sourceLabel}`, { duration: 2000 });
     } catch (error) {
       console.error('Error fetching events:', error);
       toast.error(error.message || 'Failed to load events from Google Sheets');
       setEvents([]);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const handleRefresh = () => {
+    fetchEvents(true);
   };
 
   const handleOpenDialog = (event = null) => {
