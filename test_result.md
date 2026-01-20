@@ -332,15 +332,18 @@ frontend:
 
   - task: "Contact Directory - Direct Google Sheets Integration"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/ContactDirectory.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated Contact Directory to use direct Google Sheets API via googleSheetsService.js. Replaced axios backend calls with getContactItems(). Added connection status banner showing API key configuration state. Implements read-only access with API key. Write operations show info toast. Data fetched from 'contact' tab in Google Sheet. Displays contacts in beautiful card grid with search functionality."
+      - working: true
+        agent: "main"
+        comment: "Fixed data mapping issue. Google Sheets uses capitalized column names 'Name', 'Position', 'Department', 'Phone', 'Email' but code expected lowercase versions. Updated getContactItems() to properly map all columns to lowercase field names. Now correctly displays contact names, positions, departments, phone numbers, and emails."
 
   - task: "Calendar Management - Direct Google Sheets Integration"
     implemented: true
