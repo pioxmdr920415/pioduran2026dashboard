@@ -736,6 +736,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
         onCreateFolder={handleCreateFolder}
       />
 
+      {/* Delete confirmation dialog will also respect read-only mode (no real delete) */
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent className="border-red-100 dark:border-red-900">
           <AlertDialogHeader>
