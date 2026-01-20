@@ -528,6 +528,30 @@ backend:
         agent: "main"
         comment: "✅ UPDATED: PhotoDocumentation component now uses direct Google Drive API. Replaced backend calls with getFolderStructure() and getImagesFromFolder(). Uses PHOTOS_ROOT_FOLDER_ID constant for root folder."
 
+  - task: "Supply Inventory - Print Report Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/SupplyInventory.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added print functionality to Supply Inventory module. Features include: Print Report button with printer icon, ability to print all data or filtered/searched data, professional print layout with company header and timestamp, print-optimized table view, automatic browser print dialog, stats summary in print view. Uses @media print CSS for clean print output. Print button displays next to search bar and Add Supply button."
+
+  - task: "Contact Directory - Print Report Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ContactDirectory.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added print functionality to Contact Directory module. Features include: Print Report button with printer icon, ability to print all data or filtered/searched data, professional print layout with company header and timestamp, print-optimized table view showing all contact details, automatic browser print dialog, contact count in print view. Uses @media print CSS for clean print output. Print button displays next to search bar and Add Contact button."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive testing of MDRRMO Pio Duran File Management Dashboard. Will test all visual components, interactions, animations, and responsive behavior as requested."
