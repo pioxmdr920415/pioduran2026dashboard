@@ -142,13 +142,17 @@ const PanoramaViewerModal = ({ image, onClose }) => {
   const getImageUrl = () => {
     if (!image) return '';
     
+    const API_KEY = process.env.REACT_APP_GOOGLE_DRIVE_API_KEY;
+    
     const urls = [
-      // Try direct download first
-      `https://drive.google.com/uc?export=download&id=${image.id}`,
-      // Try with CORS proxy
+      // Try Google Drive API with API key (best for authenticated access)
+      `https://www.googleapis.com/drive/v3/files/${image.id}?alt=media&key=${API_KEY}`,
+      // Try direct Google Drive viewer embed
+      `https://drive.google.com/uc?export=view&id=${image.id}`,
+      // Try CORS proxy with direct download
       `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://drive.google.com/uc?export=download&id=${image.id}`)}`,
-      // Try thumbnail at max size
-      `https://drive.google.com/thumbnail?id=${image.id}&sz=w2000`,
+      // Try thumbnail at max size (fallback)
+      `https://lh3.googleusercontent.com/d/${image.id}=w2000`,
     ];
     
     return urls[urlAttempt] || urls[0];
