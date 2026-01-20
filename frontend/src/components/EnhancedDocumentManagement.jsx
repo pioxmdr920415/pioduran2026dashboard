@@ -728,6 +728,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
         onMove={handleMoveFile}
       />
 
+      {/* CreateFolderDialog remains for future backend/OAuth support but is read-only in current SPA mode */}
       <CreateFolderDialog
         isOpen={createFolderDialogOpen}
         onClose={() => setCreateFolderDialogOpen(false)}
