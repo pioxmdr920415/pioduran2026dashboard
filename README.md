@@ -172,11 +172,19 @@ The dashboard includes 7 interactive module cards:
 ### Frontend
 - **React 19.x** - Modern UI library with hooks
 - **Tailwind CSS 3.x** - Utility-first CSS framework
-- **Shadcn/UI** - High-quality React components
-- **Leaflet** - Interactive map library
-- **React Leaflet** - React components for Leaflet
+- **Radix UI** - Unstyled, accessible component primitives
+- **Leaflet 1.9.x** - Interactive map library
+- **React Leaflet 5.x** - React components for Leaflet
+- **Pannellum 2.5.x** - WebGL-based 360° panorama viewer
 - **Lucide React** - Beautiful icon library
 - **Sonner** - Toast notifications
+- **Axios** - HTTP client for API calls
+- **React Router DOM** - Client-side routing
+
+### External Integrations
+- **Google Drive API** - Direct frontend access for file management
+- **Google Sheets API** - Direct frontend access for data storage
+- **OpenStreetMap** - Map tiles and geocoding services
 
 ### Database
 - **MongoDB** - NoSQL database for flexible data storage
