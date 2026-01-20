@@ -268,19 +268,9 @@ const EnhancedDocumentManagement = ({ onBack }) => {
     toast.info('Renaming folders is not available in SPA read-only mode. Please rename folders directly in Google Drive.');
   };
 
-  const handleDeleteFolder = async (folderId) => {
-    try {
-      await axios.delete(`${BACKEND_URL}/api/documents/folders/${folderId}`);
-      toast.success('Folder deleted successfully');
-      fetchFolderStructure();
-      // If deleted folder was selected, go back to root
-      if (folderId === selectedFolderId && folderStructure) {
-        handleSelectFolder(folderStructure.id, folderStructure.name);
-      }
-    } catch (error) {
-      console.error('Error deleting folder:', error);
-      toast.error('Failed to delete folder');
-    }
+  const handleDeleteFolder = async (_folderId) => {
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Deleting folders is not available in SPA read-only mode. Please delete folders directly in Google Drive.');
   };
 
   // Bulk operations
