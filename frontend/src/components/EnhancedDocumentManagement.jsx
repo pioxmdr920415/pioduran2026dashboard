@@ -125,7 +125,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   };
 
   // Fetch files in a folder
-  const fetchFiles = async (folderId) => {
+  const fetchFiles = useCallback(async (folderId) => {
     setFilesLoading(true);
     try {
       if (!isApiKeyConfigured()) {
@@ -151,7 +151,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
     } finally {
       setFilesLoading(false);
     }
-  };
+  }, []);
 
   // Search files
   const searchFiles = async (query, useContentSearch) => {
