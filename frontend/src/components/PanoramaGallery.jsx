@@ -287,24 +287,48 @@ const PanoramaViewerModal = ({ image, onClose }) => {
         
         {imageError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-black">
-            <div className="text-white text-center max-w-md p-8">
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Unable to load 360° view</h3>
-              <p className="text-gray-400 mb-4">
-                This image may not be in panoramic format or there's a loading issue.
-              </p>
-              <div className="flex gap-2 justify-center">
+            <div className="text-white text-center max-w-2xl p-8">
+              <AlertCircle className="w-20 h-20 text-amber-500 mx-auto mb-6 animate-pulse" />
+              <h3 className="text-2xl font-bold mb-4">Unable to Load 360° Panorama</h3>
+              <div className="space-y-3 text-left bg-white/10 rounded-lg p-6 mb-6">
+                <p className="text-gray-300">
+                  <span className="font-semibold text-white">Possible reasons:</span>
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+                  <li>The Google Drive file is not publicly shared</li>
+                  <li>The file sharing settings need to be set to "Anyone with the link"</li>
+                  <li>The image may not be in panoramic/equirectangular format</li>
+                  <li>There may be CORS restrictions on the image</li>
+                </ul>
+                <div className="mt-4 pt-4 border-t border-white/20">
+                  <p className="text-sm text-amber-300">
+                    💡 <span className="font-semibold">Tip:</span> Make sure the file in Google Drive is shared with viewing permissions enabled for "Anyone with the link"
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 justify-center">
                 <Button
                   onClick={() => window.open(image.webViewLink, '_blank')}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  View Original
+                  View in Google Drive
+                </Button>
+                <Button
+                  onClick={() => {
+                    setUrlAttempt(0);
+                    setImageError(null);
+                    setImageLoading(true);
+                  }}
+                  className="bg-amber-600 hover:bg-amber-700 text-white shadow-lg"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Try Again
                 </Button>
                 <Button
                   onClick={onClose}
                   variant="outline"
-                  className="bg-white/10 hover:bg-white/20 text-white border-white/20"
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/30 shadow-lg"
                 >
                   Close
                 </Button>
