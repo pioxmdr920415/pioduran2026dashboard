@@ -129,12 +129,25 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   const fetchFiles = async (folderId) => {
     setFilesLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/documents/files/${folderId}`);
-      setFiles(response.data);
+      if (!isApiKeyConfigured()) {
+        throw new Error('Google Drive API key is not configured. Please add REACT_APP_GOOGLE_DRIVE_API_KEY to your .env file.');
+      }
+
+      const filesList = await listFilesInFolder(folderId, {
+        fields: 'files(id,name,mimeType,size,modifiedTime,thumbnailLink,webViewLink,webContentLink,owners)'
+      });
+
+      // Normalize owner field from owners array
+      const normalizedFiles = filesList.map(file => ({
+        ...file,
+        owner: file.owners && file.owners.length > 0 ? file.owners[0].displayName || file.owners[0].emailAddress || 'Unknown' : 'Unknown'
+      }));
+
+      setFiles(normalizedFiles);
       setSelectedFileIds(new Set()); // Clear selection when changing folders
     } catch (error) {
       console.error('Error fetching files:', error);
-      toast.error('Failed to load files');
+      toast.error(error.message || 'Failed to load files');
       setFiles([]);
     } finally {
       setFilesLoading(false);
