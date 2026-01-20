@@ -57,8 +57,24 @@ const PhotoDocumentation = ({ onBack }) => {
   const [previewPhoto, setPreviewPhoto] = useState(null);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
+  // Fetch photos in a folder
+  const fetchPhotos = useCallback(async (folderId) => {
+    setPhotosLoading(true);
+    try {
+      // Use direct Google Drive API - specifically get images
+      const imagesList = await getImagesFromFolder(folderId);
+      setPhotos(imagesList);
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+      toast.error(`Failed to load photos: ${error.message}`);
+      setPhotos([]);
+    } finally {
+      setPhotosLoading(false);
+    }
+  }, []);
+
   // Fetch folder structure
-  const fetchFolderStructure = async () => {
+  const fetchFolderStructure = useCallback(async () => {
     setLoading(true);
     try {
       // Use direct Google Drive API
@@ -76,23 +92,7 @@ const PhotoDocumentation = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fetch photos in a folder
-  const fetchPhotos = async (folderId) => {
-    setPhotosLoading(true);
-    try {
-      // Use direct Google Drive API - specifically get images
-      const imagesList = await getImagesFromFolder(folderId);
-      setPhotos(imagesList);
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-      toast.error(`Failed to load photos: ${error.message}`);
-      setPhotos([]);
-    } finally {
-      setPhotosLoading(false);
-    }
-  };
+  }, [selectedFolderId, fetchPhotos]);
 
   // Handle folder selection
   const handleSelectFolder = (folderId, folderName) => {
