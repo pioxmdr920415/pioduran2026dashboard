@@ -123,6 +123,12 @@ const ContactDirectory = ({ onBack }) => {
     (contact.phone || '').includes(searchQuery)
   );
 
+  // Print functionality
+  const handlePrint = () => {
+    window.print();
+    toast.success(`Printing ${searchQuery ? 'filtered' : 'all'} contacts...`);
+  };
+
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
       <BackgroundBlobs />
