@@ -58,6 +58,41 @@ yarn build
 - **[Design Enhancements](DESIGN_ENHANCEMENTS.md)** - UI/UX improvements
 - **[Frontend API Setup](DIRECT_FRONTEND_API_SETUP.md)** - Google Drive/Sheets integration
 
+## 🛠️ Available Scripts
+
+Run these commands from the root directory (`/app/`):
+
+```bash
+# Installation
+yarn install              # Install all dependencies (frontend + backend)
+yarn install:frontend     # Install frontend only
+yarn install:backend      # Install backend only
+
+# Build
+yarn build               # Build frontend for production
+
+# Service Management
+yarn start               # Restart all services
+yarn start:frontend      # Restart frontend only
+yarn start:backend       # Restart backend only
+yarn stop                # Stop all services
+yarn status              # Check service status
+yarn dev                 # Restart and show status
+
+# Logs
+yarn logs:frontend       # View frontend output logs
+yarn logs:backend        # View backend output logs
+yarn logs:frontend:err   # View frontend error logs
+yarn logs:backend:err    # View backend error logs
+
+# Maintenance
+yarn clean               # Clean build artifacts
+yarn clean:frontend      # Clean frontend only
+yarn clean:backend       # Clean backend cache
+```
+
+**Build Output**: Production build is generated in `/app/frontend/build/`
+
 ## ✨ Features
 
 ### 🎨 Design & UI
