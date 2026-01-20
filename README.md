@@ -74,30 +74,22 @@ Run these commands from the root directory (`/app/`):
 
 ```bash
 # Installation
-yarn install              # Install all dependencies (frontend + backend)
-yarn install:frontend     # Install frontend only
-yarn install:backend      # Install backend only
+yarn install              # Install all frontend dependencies
+
+# Development
+yarn start               # Start development server
+yarn dev                 # Start development server (alias)
 
 # Build
-yarn build               # Build frontend for production
+yarn build               # Build for production
+yarn deploy              # Build for deployment
 
-# Service Management
-yarn start               # Restart all services
-yarn start:frontend      # Restart frontend only
-yarn start:backend       # Restart backend only
-yarn stop                # Stop all services
-yarn status              # Check service status
-yarn dev                 # Restart and show status
-
-# Logs
-yarn logs:frontend       # View frontend output logs
-yarn logs:backend        # View backend output logs
-yarn logs:frontend:err   # View frontend error logs
-yarn logs:backend:err    # View backend error logs
-
-# Maintenance
-yarn clean               # Clean build artifacts
-yarn clean:frontend      # Clean frontend only
+# Frontend Management (from /app/frontend/)
+cd frontend
+yarn start               # Start React dev server
+yarn build               # Create production build
+yarn test                # Run tests
+```
 yarn clean:backend       # Clean backend cache
 ```
 
