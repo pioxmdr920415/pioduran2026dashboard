@@ -177,6 +177,9 @@ export const Dashboard = ({ onOpenModule }) => {
                                 onOpenModule('interactive-map');
                               } else if (item.id === 'panorama') {
                                 onOpenModule('panorama');
+                              } else if (item.id === 'typhoon-tracking') {
+                                window.open('https://mdrrmo-typhoon-dashboard.vercel.app/', '_blank', 'noopener,noreferrer');
+                                toast.success('Opening Typhoon Tracking Dashboard...');
                               } else if (item.id === 'drrm-web') {
                                 window.open('https://mdrrmo-pioduran.vercel.app/', '_blank', 'noopener,noreferrer');
                                 toast.success('Opening DRRM-Web in new tab...');
