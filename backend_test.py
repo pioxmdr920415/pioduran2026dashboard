@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, List, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://dep-installer-30.preview.emergentagent.com/api"
+BACKEND_URL = "https://dep-install-runner.preview.emergentagent.com/api"
 
 class MapsAPITester:
     def __init__(self):
