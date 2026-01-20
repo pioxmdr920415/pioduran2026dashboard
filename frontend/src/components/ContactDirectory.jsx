@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ArrowLeft, Plus, Pencil, Trash2, Phone, Mail, User, Briefcase, Building2, Users, Star, 
-  Cloud, CloudOff, Printer, LayoutGrid, List, ChevronDown, ChevronUp, Search 
+  Cloud, CloudOff, Printer, LayoutGrid, List, ChevronDown, ChevronUp, Search, RefreshCw
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -13,11 +13,13 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Header } from './Header';
 import { BackgroundBlobs } from './BackgroundBlobs';
-import { getContactItems, isApiKeyConfigured } from '../services/googleSheetsService';
+import { getContactItems, isApiKeyConfigured } from '../services/optimizedGoogleSheetsService';
 
 const ContactDirectory = ({ onBack }) => {
   const [contacts, setContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dataSource, setDataSource] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentContact, setCurrentContact] = useState(null);
@@ -34,13 +36,13 @@ const ContactDirectory = ({ onBack }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [expandedRow, setExpandedRow] = useState(null);
 
-  useEffect(() => {
-    fetchContacts();
-  }, []);
-
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async (forceRefresh = false) => {
     try {
-      setIsLoading(true);
+      if (forceRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
       
       if (!isApiKeyConfigured()) {
         toast.error('Google Sheets API key not configured. Please add REACT_APP_GOOGLE_SHEETS_API_KEY to .env file');
@@ -48,16 +50,36 @@ const ContactDirectory = ({ onBack }) => {
         return;
       }
       
-      const data = await getContactItems();
-      setContacts(data);
-      toast.success(`Loaded ${data.length} contacts from Google Sheets!`);
+      const result = await getContactItems({
+        forceRefresh,
+        onUpdate: (freshData) => {
+          setContacts(freshData);
+          setDataSource('network-update');
+          toast.success('Contacts refreshed in background!', { duration: 2000 });
+        }
+      });
+      
+      setContacts(result.data);
+      setDataSource(result.source);
+      
+      const sourceLabel = result.source?.includes('cache') ? '⚡ (cached)' : '🌐 (live)';
+      toast.success(`Loaded ${result.data.length} contacts ${sourceLabel}`, { duration: 2000 });
     } catch (error) {
       console.error('Error fetching contacts:', error);
       toast.error(error.message || 'Failed to load contacts from Google Sheets');
       setContacts([]);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
+
+  const handleRefresh = () => {
+    fetchContacts(true);
   };
 
   const handleSort = (key) => {
