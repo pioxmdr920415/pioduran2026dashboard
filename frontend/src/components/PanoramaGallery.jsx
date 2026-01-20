@@ -217,6 +217,28 @@ const PanoramaViewerModal = ({ image, onClose }) => {
 
   if (!image) return null;
 
+  const handlePanoramaLoad = () => {
+    setImageLoading(false);
+    setImageError(null);
+    toast.success('360° Panorama loaded!');
+  };
+
+  const handlePanoramaError = (err) => {
+    console.error('Panorama load error:', err, 'URL attempt:', urlAttempt);
+    
+    // Try next URL format
+    if (urlAttempt < 2) {
+      setUrlAttempt(prev => prev + 1);
+      setImageLoading(true);
+      setImageError(null);
+      toast.info(`Trying alternative loading method (${urlAttempt + 2}/3)...`);
+    } else {
+      setImageLoading(false);
+      setImageError(err);
+      toast.error('Unable to load 360° view. Please try viewing the original image.');
+    }
+  };
+
   const config = {
     type: 'equirectangular',
     autoLoad: true,
@@ -232,16 +254,6 @@ const PanoramaViewerModal = ({ image, onClose }) => {
     pitch: 0,
     yaw: 180,
     hfov: 110,
-    onLoad: () => {
-      setImageLoading(false);
-      toast.success('360° Panorama loaded!');
-    },
-    onError: (err) => {
-      setImageLoading(false);
-      setImageError(err);
-      console.error('Panorama load error:', err);
-      toast.error('Failed to load 360° view. Try downloading the image instead.');
-    }
   };
 
   return (
