@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   FileText, 
   Search, 
@@ -23,7 +23,7 @@ import {
 } from "./ui/select";
 import FolderTreeItem from './DocumentManagement/FolderTreeItem';
 import FileCard from './DocumentManagement/FileCard';
-import { getFolderStructure, listFilesInFolder, isApiKeyConfigured } from '../services/googleDriveService';
+import { getFolderStructure, listFilesInFolder, isApiKeyConfigured, prefetchFolder, invalidateCache } from '../services/optimizedGoogleDriveService';
 // Document Management folder ID
 const DOCUMENTS_ROOT_FOLDER_ID = '15_xiFeXu_vdIe2CYrjGaRCAho2OqhGvo';
 
@@ -52,36 +52,60 @@ const DocumentManagement = ({ onBack }) => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filesLoading, setFilesLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dataSource, setDataSource] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterOwner, setFilterOwner] = useState('all');
 
-  // Fetch folder structure
-  const fetchFolderStructure = async () => {
-    setLoading(true);
+  // Fetch folder structure with caching
+  const fetchFolderStructure = useCallback(async (forceRefresh = false) => {
+    if (forceRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    
     try {
-      // Use direct Google Drive API
-      const structure = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3);
-      setFolderStructure(structure);
+      const result = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3, {
+        forceRefresh,
+        onUpdate: (freshData) => {
+          setFolderStructure(freshData);
+          toast.success('Folder structure updated!', { duration: 2000 });
+        }
+      });
+      
+      setFolderStructure(result.data);
+      setDataSource(result.source);
+      
       // Auto-select root folder
-      setSelectedFolderId(structure.id);
-      setSelectedFolderName(structure.name);
-      fetchFiles(structure.id);
+      setSelectedFolderId(result.data.id);
+      setSelectedFolderName(result.data.name);
+      fetchFiles(result.data.id, forceRefresh);
+      
+      const sourceLabel = result.source?.includes('cache') ? '⚡ (cached)' : '🌐 (live)';
+      toast.success(`Folder structure loaded ${sourceLabel}`, { duration: 2000 });
     } catch (error) {
       console.error('Error fetching folder structure:', error);
       toast.error(`Failed to load folder structure: ${error.message}`);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
-  };
+  }, []);
 
-  // Fetch files in a folder
-  const fetchFiles = async (folderId) => {
+  // Fetch files in a folder with caching
+  const fetchFiles = useCallback(async (folderId, forceRefresh = false) => {
     setFilesLoading(true);
     try {
-      // Use direct Google Drive API
-      const filesList = await listFilesInFolder(folderId);
-      setFiles(filesList);
+      const result = await listFilesInFolder(folderId, {
+        forceRefresh,
+        onUpdate: (freshData) => {
+          setFiles(freshData);
+        }
+      });
+      
+      setFiles(result.data);
     } catch (error) {
       console.error('Error fetching files:', error);
       toast.error(`Failed to load files: ${error.message}`);
@@ -89,20 +113,27 @@ const DocumentManagement = ({ onBack }) => {
     } finally {
       setFilesLoading(false);
     }
-  };
+  }, []);
 
-  // Handle folder selection
-  const handleSelectFolder = (folderId, folderName) => {
+  // Handle folder selection with prefetching
+  const handleSelectFolder = useCallback((folderId, folderName) => {
     setSelectedFolderId(folderId);
     setSelectedFolderName(folderName);
     fetchFiles(folderId);
-  };
+  }, [fetchFiles]);
 
-  // Handle refresh
-  const handleRefresh = () => {
+  // Handle folder hover for prefetching
+  const handleFolderHover = useCallback((folderId) => {
+    // Prefetch folder data when user hovers over it
+    prefetchFolder(folderId);
+  }, []);
+
+  // Handle refresh with cache invalidation
+  const handleRefresh = useCallback(() => {
     toast.info('Refreshing folder structure...');
-    fetchFolderStructure();
-  };
+    invalidateCache(DOCUMENTS_ROOT_FOLDER_ID);
+    fetchFolderStructure(true);
+  }, [fetchFolderStructure]);
 
   // Handle preview
   const handlePreview = (link) => {
