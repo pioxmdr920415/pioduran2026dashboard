@@ -1,12 +1,12 @@
 # MDRRMO Pio Duran - File Inventory & Management System
 
-A beautiful, modern full-stack application for file inventory and management system with Google Drive/Sheets integration, interactive maps, and 360° panoramic gallery.
+A beautiful, modern frontend application for file inventory and management system with direct Google Drive/Sheets API integration, interactive maps, and 360° panoramic gallery.
 
 ![Dashboard Preview](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 ![React](https://img.shields.io/badge/React-19.x-61dafb)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38bdf8)
-![MongoDB](https://img.shields.io/badge/MongoDB-4.5-47A248)
+![Google APIs](https://img.shields.io/badge/Google%20APIs-Drive%20%26%20Sheets-4285F4)
+![Frontend Only](https://img.shields.io/badge/Architecture-Frontend%20Only-green)
 
 ## 🚀 Deploy to Vercel
 
@@ -20,7 +20,7 @@ A beautiful, modern full-stack application for file inventory and management sys
 
 ## 📋 Overview
 
-This is a **full-stack application** featuring a modern, responsive dashboard for the MDRRMO Pio Duran File Inventory & Management System. The application features stunning UI/UX with animated gradients, glassmorphism effects, smooth interactions, and **direct Google Drive/Sheets API integration** (no backend proxy for data operations).
+This is a **frontend-only application** featuring a modern, responsive dashboard for the MDRRMO Pio Duran File Inventory & Management System. The application features stunning UI/UX with animated gradients, glassmorphism effects, smooth interactions, and **direct Google Drive/Sheets API integration** (no backend server needed - all API calls are made directly from the frontend).
 
 ## 🚀 Quick Start
 
@@ -44,19 +44,19 @@ yarn build
 
 ```
 /app/
-├── frontend/              # React application
+├── frontend/              # React application (Frontend Only)
 │   ├── src/              # Source code
 │   │   ├── components/   # React components
 │   │   ├── services/     # API services (Google Drive/Sheets)
+│   │   │   ├── googleDriveService.js
+│   │   │   └── googleSheetsService.js
 │   │   └── App.js        # Main app
+│   ├── public/           # Static assets & PWA files
 │   ├── build/            # Production build (generated)
-│   └── package.json      # Frontend dependencies
-├── backend/              # FastAPI server
-│   ├── server.py         # Main server
-│   ├── requirements.txt  # Python dependencies
-│   └── .env             # Backend config
+│   ├── .env             # API keys configuration
+│   └── package.json      # Dependencies
 ├── package.json          # Root scripts
-└── tests/               # Test files
+└── docs/                # Documentation files
 ```
 
 ## ⚡ Key Links
