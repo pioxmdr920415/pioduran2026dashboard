@@ -163,18 +163,28 @@ const EnhancedDocumentManagement = ({ onBack }) => {
 
     setFilesLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/documents/search`, {
-        params: {
-          query: query,
-          content_search: useContentSearch,
-          folder_id: selectedFolderId
-        }
-      });
-      setFiles(response.data);
-      toast.success(`Found ${response.data.length} file(s)`);
+      if (!isApiKeyConfigured()) {
+        throw new Error('Google Drive API key is not configured. Please add REACT_APP_GOOGLE_DRIVE_API_KEY to your .env file.');
+      }
+
+      // Google Drive API supports name search with API key; content search would
+      // require additional scopes/OAuth, so we only support name search in SPA mode.
+      if (useContentSearch) {
+        toast.info('Content search is not available in read-only SPA mode. Using name search instead.');
+      }
+
+      const results = await searchFilesInFolder(selectedFolderId, query);
+
+      const normalizedFiles = results.map(file => ({
+        ...file,
+        owner: file.owners && file.owners.length > 0 ? file.owners[0].displayName || file.owners[0].emailAddress || 'Unknown' : 'Unknown'
+      }));
+
+      setFiles(normalizedFiles);
+      toast.success(`Found ${normalizedFiles.length} file(s)`);
     } catch (error) {
       console.error('Error searching files:', error);
-      toast.error('Search failed');
+      toast.error(error.message || 'Search failed');
     } finally {
       setFilesLoading(false);
     }
