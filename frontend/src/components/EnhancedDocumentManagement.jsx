@@ -295,17 +295,8 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   };
 
   const handleBulkDelete = async () => {
-    try {
-      await axios.post(`${BACKEND_URL}/api/documents/bulk/delete`, {
-        file_ids: Array.from(selectedFileIds)
-      });
-      toast.success(`${selectedFileIds.size} file(s) deleted successfully`);
-      setSelectedFileIds(new Set());
-      fetchFiles(selectedFolderId);
-    } catch (error) {
-      console.error('Error deleting files:', error);
-      toast.error('Failed to delete files');
-    }
+    // Write operations are not supported in SPA read-only mode
+    toast.info('Bulk delete is not available in SPA read-only mode. Please delete files directly in Google Drive.');
   };
 
   const handleBulkMove = () => {
