@@ -20,6 +20,8 @@ import { getSupplyItems, isApiKeyConfigured, invalidateCache } from '../services
 const SupplyInventory = ({ onBack }) => {
   const [supplies, setSupplies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dataSource, setDataSource] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentSupply, setCurrentSupply] = useState(null);
@@ -37,13 +39,13 @@ const SupplyInventory = ({ onBack }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [expandedRow, setExpandedRow] = useState(null);
 
-  useEffect(() => {
-    fetchSupplies();
-  }, []);
-
-  const fetchSupplies = async () => {
+  const fetchSupplies = useCallback(async (forceRefresh = false) => {
     try {
-      setIsLoading(true);
+      if (forceRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
       
       if (!isApiKeyConfigured()) {
         toast.error('Google Sheets API key not configured. Please add REACT_APP_GOOGLE_SHEETS_API_KEY to .env file');
@@ -51,16 +53,38 @@ const SupplyInventory = ({ onBack }) => {
         return;
       }
       
-      const data = await getSupplyItems();
-      setSupplies(data);
-      toast.success(`Loaded ${data.length} items from Google Sheets!`);
+      const result = await getSupplyItems({
+        forceRefresh,
+        onUpdate: (freshData) => {
+          // Called when fresh data arrives during stale-while-revalidate
+          setSupplies(freshData);
+          setDataSource('network-update');
+          toast.success('Data refreshed in background!', { duration: 2000 });
+        }
+      });
+      
+      setSupplies(result.data);
+      setDataSource(result.source);
+      
+      // Show appropriate toast based on data source
+      const sourceLabel = result.source?.includes('cache') ? '⚡ (cached)' : '🌐 (live)';
+      toast.success(`Loaded ${result.data.length} items ${sourceLabel}`, { duration: 2000 });
     } catch (error) {
       console.error('Error fetching supplies:', error);
       toast.error(error.message || 'Failed to load supply items from Google Sheets');
       setSupplies([]);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchSupplies();
+  }, [fetchSupplies]);
+
+  const handleRefresh = () => {
+    fetchSupplies(true);
   };
 
   const handleSort = (key) => {
