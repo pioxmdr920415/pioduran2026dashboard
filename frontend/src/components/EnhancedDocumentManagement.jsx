@@ -100,7 +100,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   const [deleteItemType, setDeleteItemType] = useState('file');
 
   // Fetch folder structure
-  const fetchFolderStructure = async () => {
+  const fetchFolderStructure = useCallback(async () => {
     setLoading(true);
     try {
       if (!isApiKeyConfigured()) {
@@ -122,7 +122,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedFolderId, fetchFiles]);
 
   // Fetch files in a folder
   const fetchFiles = useCallback(async (folderId) => {
