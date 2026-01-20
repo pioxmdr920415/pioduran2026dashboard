@@ -1,11 +1,36 @@
-import React from 'react';
-import { X, Download, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Download, ExternalLink, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { formatFileSize, formatDate } from '../DocumentManagement/utils';
 
+/**
+ * Get high-quality Google Drive image URL
+ * @param {string} fileId - Google Drive file ID
+ * @param {number} size - Maximum size (default: 2000 for high quality)
+ * @returns {string} Direct image URL
+ */
+const getGoogleDriveImageUrl = (fileId, size = 2000) => {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size}`;
+};
+
 const ImagePreviewModal = ({ photo, open, onClose, onDownload }) => {
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
   if (!photo) return null;
+
+  // Get high-quality image URL using the file ID
+  const imageUrl = getGoogleDriveImageUrl(photo.id, 2000);
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -36,11 +61,32 @@ const ImagePreviewModal = ({ photo, open, onClose, onDownload }) => {
 
         {/* Image */}
         <div className="relative bg-black flex items-center justify-center overflow-auto" style={{ maxHeight: 'calc(90vh - 180px)' }}>
-          <img
-            src={photo.webViewLink || photo.webContentLink || photo.thumbnailLink}
-            alt={photo.name}
-            className="max-w-full max-h-full object-contain"
-          />
+          {imageLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            </div>
+          )}
+          {imageError ? (
+            <div className="flex flex-col items-center justify-center p-8 text-white">
+              <p className="text-lg mb-4">Failed to load image</p>
+              <Button
+                variant="outline"
+                onClick={() => window.open(photo.webViewLink, '_blank')}
+                className="text-white border-white hover:bg-white/10"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open in Google Drive
+              </Button>
+            </div>
+          ) : (
+            <img
+              src={imageUrl}
+              alt={photo.name}
+              className="max-w-full max-h-full object-contain"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          )}
         </div>
 
         {/* Footer */}
