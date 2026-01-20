@@ -267,7 +267,7 @@ const CalendarManagement = ({ onBack }) => {
 
               {/* Google Sheets Connection Banner */}
               {isApiKeyConfigured() ? (
-                <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 backdrop-blur-sm">
+                <div className="hidden mb-6 p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
                     <Cloud className="h-5 w-5 text-green-500" />
                     <div>
