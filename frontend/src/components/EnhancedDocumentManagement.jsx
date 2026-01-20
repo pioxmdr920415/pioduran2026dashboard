@@ -99,31 +99,6 @@ const EnhancedDocumentManagement = ({ onBack }) => {
   const [deleteItem, setDeleteItem] = useState(null);
   const [deleteItemType, setDeleteItemType] = useState('file');
 
-  // Fetch folder structure
-  const fetchFolderStructure = useCallback(async () => {
-    setLoading(true);
-    try {
-      if (!isApiKeyConfigured()) {
-        throw new Error('Google Drive API key is not configured. Please add REACT_APP_GOOGLE_DRIVE_API_KEY to your .env file.');
-      }
-
-      const structure = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3);
-      setFolderStructure(structure);
-
-      // Auto-select root folder if none selected
-      if (!selectedFolderId) {
-        setSelectedFolderId(structure.id);
-        setSelectedFolderName(structure.name);
-        fetchFiles(structure.id);
-      }
-    } catch (error) {
-      console.error('Error fetching folder structure:', error);
-      toast.error(error.message || 'Failed to load folder structure');
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedFolderId, fetchFiles]);
-
   // Fetch files in a folder
   const fetchFiles = useCallback(async (folderId) => {
     setFilesLoading(true);
@@ -152,6 +127,31 @@ const EnhancedDocumentManagement = ({ onBack }) => {
       setFilesLoading(false);
     }
   }, []);
+
+  // Fetch folder structure
+  const fetchFolderStructure = useCallback(async () => {
+    setLoading(true);
+    try {
+      if (!isApiKeyConfigured()) {
+        throw new Error('Google Drive API key is not configured. Please add REACT_APP_GOOGLE_DRIVE_API_KEY to your .env file.');
+      }
+
+      const structure = await getFolderStructure(DOCUMENTS_ROOT_FOLDER_ID, 3);
+      setFolderStructure(structure);
+
+      // Auto-select root folder if none selected
+      if (!selectedFolderId) {
+        setSelectedFolderId(structure.id);
+        setSelectedFolderName(structure.name);
+        fetchFiles(structure.id);
+      }
+    } catch (error) {
+      console.error('Error fetching folder structure:', error);
+      toast.error(error.message || 'Failed to load folder structure');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedFolderId, fetchFiles]);
 
   // Search files
   const searchFiles = async (query, useContentSearch) => {
