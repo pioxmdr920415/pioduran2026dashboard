@@ -362,15 +362,18 @@ frontend:
 
   - task: "Google Sheets Service - Frontend API Client"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/services/googleSheetsService.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created comprehensive Google Sheets service for direct frontend API access. Functions: isApiKeyConfigured(), getSheetData(), getSupplyItems(), getContactItems(), getEventItems(), searchInSheet(), getMultipleSheets(), getBatchData(), getSheetMetadata(). Uses REACT_APP_GOOGLE_SHEETS_API_KEY from .env. Automatically parses sheet data from values array to objects. Handles errors gracefully with clear messages."
+      - working: true
+        agent: "main"
+        comment: "Fixed critical data mapping issue. Updated parseSheetData() to handle both original and normalized column names. Updated all getter functions (getSupplyItems, getContactItems, getEventItems) to properly map Google Sheets column names to expected field names. Handles variations like 'Item Name' -> itemName, 'Event/Task' -> eventTask, capitalized names to lowercase. All three modules now display data correctly."
 
 metadata:
   created_by: "testing_agent"
