@@ -1,0 +1,68 @@
+{
+  "name": "mdrrmo-pio-duran-file-management",
+  "version": "1.0.0",
+  "description": "MDRRMO Pio Duran File Inventory & Management System",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "install": "yarn install:all",
+    "install:all": "yarn install:frontend && yarn install:backend",
+    "install:frontend": "cd frontend && yarn install",
+    "install:backend": "cd backend && pip install -r requirements.txt",
+    "build": "yarn build:frontend",
+    "build:frontend": "cd frontend && yarn build",
+    "start": "sudo supervisorctl restart all",
+    "start:frontend": "sudo supervisorctl restart frontend",
+    "start:backend": "sudo supervisorctl restart backend",
+    "stop": "sudo supervisorctl stop all",
+    "status": "sudo supervisorctl status",
+    "logs:frontend": "tail -f /var/log/supervisor/frontend.out.log",
+    "logs:backend": "tail -f /var/log/supervisor/backend.out.log",
+    "logs:frontend:err": "tail -f /var/log/supervisor/frontend.err.log",
+    "logs:backend:err": "tail -f /var/log/supervisor/backend.err.log",
+    "dev": "sudo supervisorctl restart all && echo 'Services restarted. Check status with: yarn status'",
+    "clean": "yarn clean:frontend",
+    "clean:frontend": "cd frontend && rm -rf build node_modules",
+    "clean:backend": "cd backend && find . -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true",
+    "test:frontend": "cd frontend && yarn test",
+    "lint:frontend": "cd frontend && yarn lint",
+    "format": "cd frontend && prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' || echo 'Prettier not configured'"
+  },
+  "directories": {
+    "frontend": "./frontend",
+    "backend": "./backend",
+    "build": "./frontend/build",
+    "tests": "./tests",
+    "docs": "."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mdrrmo-pio-duran-file-management"
+  },
+  "keywords": [
+    "file-management",
+    "inventory",
+    "mdrrmo",
+    "react",
+    "fastapi",
+    "mongodb",
+    "google-drive",
+    "google-sheets",
+    "leaflet",
+    "panorama"
+  ],
+  "author": "MDRRMO Pio Duran",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0",
+    "yarn": ">=1.22.0",
+    "python": ">=3.11.0"
+  },
+  "config": {
+    "frontend_port": "3000",
+    "backend_port": "8001",
+    "mongodb_port": "27017"
+  }
+}
