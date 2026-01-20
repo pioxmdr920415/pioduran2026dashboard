@@ -696,6 +696,7 @@ const EnhancedDocumentManagement = ({ onBack }) => {
       </div>
 
       {/* Modals */}
+      {/* Upload modal kept for UI consistency but shows read-only info */}
       <FileUploadModal
         isOpen={uploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
