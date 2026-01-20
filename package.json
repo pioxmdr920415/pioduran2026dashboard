@@ -1,13 +1,13 @@
 {
   "name": "mdrrmo-pio-duran",
   "version": "1.0.0",
-  "description": "MDRRMO Pio Duran File Inventory & Management System",
+  "description": "MDRRMO Pio Duran File Inventory & Management System - Frontend Only",
   "scripts": {
-    "vercel-build": "cd frontend && yarn install && yarn build",
+    "install": "cd frontend && yarn install",
     "build": "cd frontend && yarn build",
     "start": "cd frontend && yarn start",
-    "install-frontend": "cd frontend && yarn install",
-    "install-backend": "cd backend && pip install -r requirements.txt"
+    "dev": "cd frontend && yarn start",
+    "deploy": "cd frontend && yarn build"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,9 @@
     "mdrrmo",
     "disaster-management",
     "file-management",
-    "inventory-system"
+    "inventory-system",
+    "frontend-only",
+    "google-api"
   ],
   "author": "MDRRMO Pio Duran",
   "license": "MIT"
