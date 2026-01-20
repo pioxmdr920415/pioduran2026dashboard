@@ -18,11 +18,9 @@ const PhotoCard = ({ photo, onPreview, onDownload, onShare, index = 0 }) => {
   };
 
   const getThumbnailUrl = () => {
-    if (photo.thumbnailLink) {
-      return photo.thumbnailLink;
-    }
-    // Fallback to webContentLink if thumbnailLink not available
-    return photo.webContentLink;
+    // Use Google Drive's thumbnail API for better quality and reliability
+    // sz=w800 provides good quality for card thumbnails
+    return `https://drive.google.com/thumbnail?id=${photo.id}&sz=w800`;
   };
 
   return (
