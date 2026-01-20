@@ -467,7 +467,155 @@ const ContactDirectory = ({ onBack }) => {
           background-size: 200% auto;
           animation: gradient 3s ease infinite;
         }
+
+        /* Print Styles */
+        @media print {
+          @page {
+            size: A4;
+            margin: 15mm;
+          }
+
+          body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+
+          /* Hide non-printable elements */
+          .print\\:hidden,
+          button:not(.print-show),
+          [data-testid="back-to-dashboard-btn"],
+          [data-testid="add-contact-btn"],
+          [data-testid="print-contact-btn"],
+          [data-testid="search-contacts-input"],
+          .bg-gradient-to-r.blur-3xl {
+            display: none !important;
+          }
+
+          /* Show print header */
+          .print-header {
+            display: block !important;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #10b981;
+          }
+
+          .print-header h1 {
+            font-size: 28px;
+            color: #10b981;
+            margin-bottom: 5px;
+          }
+
+          .print-header p {
+            font-size: 14px;
+            color: #666;
+          }
+
+          /* Print table view */
+          .print-table {
+            display: table !important;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+
+          .print-table thead {
+            display: table-header-group;
+            background-color: #10b981 !important;
+            color: white !important;
+          }
+
+          .print-table th {
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ddd;
+          }
+
+          .print-table tbody {
+            display: table-row-group;
+          }
+
+          .print-table tr {
+            display: table-row;
+            page-break-inside: avoid;
+          }
+
+          .print-table td {
+            display: table-cell;
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 11px;
+          }
+
+          /* Hide card grid, show table */
+          [data-testid="contacts-grid"] {
+            display: none !important;
+          }
+
+          /* Stats cards in print */
+          .grid.grid-cols-1.md\\:grid-cols-3 {
+            display: flex !important;
+            gap: 10px;
+            margin-bottom: 20px;
+          }
+
+          .grid.grid-cols-1.md\\:grid-cols-3 > div {
+            flex: 1;
+            page-break-inside: avoid;
+          }
+
+          /* Simplify backgrounds */
+          main {
+            background: white !important;
+          }
+
+          .backdrop-blur-sm,
+          .bg-card\\/50 {
+            background: white !important;
+            backdrop-filter: none !important;
+          }
+        }
       `}</style>
+
+      {/* Hidden Print View */}
+      <div className="hidden print:block print-header">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1>MDRRMO Pio Duran</h1>
+            <p>Contact Directory Report</p>
+          </div>
+          <div className="text-right text-sm">
+            <p>Generated: {new Date().toLocaleString()}</p>
+            <p>Total Contacts: {filteredContacts.length} {searchQuery && `(Filtered)`}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Print Table View */}
+      <table className="hidden print-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Department</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredContacts.map((contact, index) => (
+            <tr key={contact.row_index}>
+              <td>{index + 1}</td>
+              <td>{contact.name}</td>
+              <td>{contact.position}</td>
+              <td>{contact.department}</td>
+              <td>{contact.phone}</td>
+              <td>{contact.email || 'N/A'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
