@@ -277,10 +277,21 @@ const PanoramaViewerModal = ({ image, onClose }) => {
       {/* 360° Panorama Viewer */}
       <div className="w-full h-full relative">
         {imageLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black">
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
             <div className="text-white text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-              <p>Loading 360° panorama...</p>
+              <div className="relative">
+                <div className="animate-spin rounded-full h-20 w-20 border-4 border-white/20 border-t-white mx-auto mb-6"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Eye className="w-8 h-8 text-white animate-pulse" />
+                </div>
+              </div>
+              <p className="text-xl font-semibold mb-2">Loading 360° Panorama...</p>
+              <p className="text-sm text-gray-300">Preparing immersive view</p>
+              {urlAttempt > 0 && (
+                <p className="text-xs text-amber-300 mt-3">
+                  Trying method {urlAttempt + 1} of 4...
+                </p>
+              )}
             </div>
           </div>
         )}
