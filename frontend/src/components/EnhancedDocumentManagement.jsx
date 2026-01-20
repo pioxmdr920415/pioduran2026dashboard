@@ -470,6 +470,9 @@ const EnhancedDocumentManagement = ({ onBack }) => {
                   <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                   Current Folder: <span className="font-semibold text-blue-700 dark:text-blue-300">{selectedFolderName}</span>
                 </p>
+                <p className="text-xs mt-1 text-gray-500 dark:text-gray-500">
+                  Read-only mode: This SPA uses a Google Drive API key. To upload, rename, delete or move files and folders, please manage them directly in Google Drive.
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mr-2">
