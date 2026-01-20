@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Pencil, Trash2, Phone, Mail, User, Briefcase, Building2, Users, Star, Cloud, CloudOff } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Phone, Mail, User, Briefcase, Building2, Users, Star, Cloud, CloudOff, Printer } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
